@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AJA DDU Builder — Screen Design</title>
+<style>
+  :root {
+    --bg: #f1ecdf; --surface: #fbf9f3; --surface-2: #ffffff;
+    --ink: #2a2620; --ink-soft: #6b6255; --ink-faint: #9a8f7d;
+    --accent: #c97a1a; --accent-ink: #5c3a0a; --accent-soft: #f3ddb2;
+    --teal: #1e4a48; --teal-ink: #ffffff; --teal-soft: #dce9e8;
+    --line: #e3dbc8; --line-strong: #cfc4a8;
+    --good: #3e7a52; --good-bg: #e3efe1;
+    --warn: #a2531c; --warn-bg: #f4e3cf;
+    --crit: #9c3b32; --crit-bg: #f3ddd9;
+    --shadow: 0 1px 2px rgba(42,38,32,0.06), 0 8px 24px -12px rgba(42,38,32,0.18);
+  }
+  :root[data-theme="dark"] {
+    --bg: #131e1c; --surface: #1a2725; --surface-2: #1f2e2b;
+    --ink: #ece5d6; --ink-soft: #a79c88; --ink-faint: #7c7360;
+    --accent: #e7a23c; --accent-ink: #2a1a05; --accent-soft: #4a380f;
+    --teal: #9fd4cf; --teal-ink: #0d1a19; --teal-soft: #21322f;
+    --line: #2b3835; --line-strong: #3a4a46;
+    --good: #6fbb84; --good-bg: #1e3327;
+    --warn: #e2a469; --warn-bg: #3a2a15;
+    --crit: #e2938a; --crit-bg: #3a2320;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #131e1c; --surface: #1a2725; --surface-2: #1f2e2b;
+      --ink: #ece5d6; --ink-soft: #a79c88; --ink-faint: #7c7360;
+      --accent: #e7a23c; --accent-ink: #2a1a05; --accent-soft: #4a380f;
+      --teal: #9fd4cf; --teal-ink: #0d1a19; --teal-soft: #21322f;
+      --line: #2b3835; --line-strong: #3a4a46;
+      --good: #6fbb84; --good-bg: #1e3327;
+      --warn: #e2a469; --warn-bg: #3a2a15;
+      --crit: #e2938a; --crit-bg: #3a2320;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, "Noto Sans", Helvetica, Arial, sans-serif;
+    line-height: 1.5; -webkit-font-smoothing: antialiased;
+  }
+  .display { font-family: "Iowan Old Style", "Palatino Linotype", Georgia, "Noto Serif", serif; text-wrap: balance; }
+  .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+  .mono { font-family: ui-monospace, "SF Mono", Consolas, "Roboto Mono", monospace; }
+  a { color: inherit; }
+
+  /* ---------- masthead ---------- */
+  .masthead { position: sticky; top: 0; z-index: 60; background: var(--bg); border-bottom: 1px solid var(--line); padding: 13px clamp(16px, 4vw, 40px); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .masthead .brand { display: flex; align-items: baseline; gap: 10px; }
+  .masthead .brand .mark { font-size: 22px; }
+  .masthead .brand h1 { font-size: 16px; margin: 0; font-weight: 700; }
+  .masthead .brand span.sub { font-size: 11.5px; color: var(--ink-soft); }
+  .masthead nav { display: flex; gap: 4px; flex-wrap: wrap; }
+  .masthead nav a { text-decoration: none; font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 999px; color: var(--ink-soft); border: 1px solid transparent; white-space: nowrap; }
+  .masthead nav a:hover { border-color: var(--line-strong); color: var(--ink); }
+
+  .intro { max-width: 780px; margin: 0 auto; padding: 34px clamp(16px,4vw,40px) 6px; }
+  .intro .eyebrow { text-transform: uppercase; letter-spacing: 0.12em; font-size: 11px; font-weight: 700; color: var(--accent-ink); background: var(--accent-soft); display: inline-block; padding: 4px 10px; border-radius: 999px; margin-bottom: 14px; }
+  .intro h2 { font-size: clamp(24px, 4vw, 32px); margin: 0 0 12px; }
+  .intro p { color: var(--ink-soft); font-size: 14.5px; max-width: 68ch; }
+  .intro .changelog { margin-top: 16px; border: 1px solid var(--line); border-radius: 12px; padding: 12px 15px; background: var(--surface); font-size: 12.5px; }
+  .intro .changelog b { color: var(--accent-ink); }
+  .intro .changelog ul { margin: 6px 0 0; padding-left: 18px; }
+  .intro .changelog li { margin-bottom: 4px; color: var(--ink-soft); }
+
+  section.track { padding: 26px clamp(16px,4vw,40px) 10px; }
+  section.track > .track-head { max-width: 1260px; margin: 0 auto 20px; display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  section.track > .track-head .tag { font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 11px; border-radius: 6px; margin-top: 2px; }
+  .tag.field { background: var(--accent-soft); color: var(--accent-ink); }
+  .tag.admin { background: var(--teal); color: var(--teal-ink); }
+  .tag.mitra { background: var(--good-bg); color: var(--good); }
+  .tag.money { background: var(--warn-bg); color: var(--warn); }
+  section.track > .track-head h3 { font-size: 19px; margin: 0; }
+  section.track > .track-head p { margin: 2px 0 0; color: var(--ink-soft); font-size: 13px; max-width: 66ch; }
+
+  hr.div { border: none; border-top: 1.5px dashed var(--line-strong); max-width: 1260px; margin: 32px auto; }
+
+  .rail { max-width: 1260px; margin: 0 auto; display: flex; gap: 22px; overflow-x: auto; padding: 4px 4px 16px; scroll-snap-type: x proximity; }
+  .card { scroll-snap-align: start; flex: 0 0 auto; display: flex; flex-direction: column; gap: 10px; }
+  .card .note { max-width: 236px; font-size: 11.8px; color: var(--ink-soft); }
+  .card .note b { color: var(--ink); }
+  .card .capline { font-size: 11px; font-weight: 700; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* ---------- phone frame ---------- */
+  .phone { width: 272px; height: 560px; background: var(--surface); border-radius: 30px; border: 1px solid var(--line-strong); box-shadow: var(--shadow); padding: 9px; display: flex; flex-direction: column; position: relative; }
+  .phone.tall { height: 610px; }
+  .phone .notch { width: 82px; height: 16px; background: var(--ink); opacity: 0.08; border-radius: 0 0 11px 11px; margin: 0 auto 5px; }
+  .phone .screen { flex: 1; background: var(--surface-2); border-radius: 19px; overflow: hidden; display: flex; flex-direction: column; position: relative; border: 1px solid var(--line); }
+  .phone .statusbar { display: flex; justify-content: space-between; padding: 7px 15px 2px; font-size: 10.5px; color: var(--ink-faint); font-weight: 600; }
+  .screen-body { flex: 1; display: flex; flex-direction: column; padding: 12px 15px 15px; overflow: hidden; }
+
+  .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; }
+  .app-header .place { font-size: 10.8px; color: var(--ink-soft); font-weight: 700; }
+  .avatar { width: 23px; height: 23px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-ink); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; }
+  .avatar.teal { background: var(--teal); color: var(--teal-ink); }
+  .avatar.good { background: var(--good-bg); color: var(--good); }
+
+  .field-id { font-size: 9.5px; color: var(--ink-faint); font-weight: 700; letter-spacing: 0.04em; }
+  .question { font-size: 16.5px; font-weight: 700; margin: 5px 0 13px; text-wrap: balance; }
+
+  .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .choice-grid.stack { grid-template-columns: 1fr; }
+  .choice-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  .choice { border: 1.5px solid var(--line-strong); border-radius: 10px; padding: 11px 8px; text-align: center; font-size: 12px; font-weight: 700; background: var(--surface); }
+  .choice.selected { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink); }
+  .choice.small { padding: 8px 6px; font-size: 11px; }
+
+  .spacer { flex: 1; }
+  .btn-row { display: flex; gap: 8px; margin-top: 10px; }
+  .btn { border: none; border-radius: 10px; padding: 11px 13px; font-size: 12.5px; font-weight: 700; text-align: center; flex: 1; }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); }
+  .btn.teal { background: var(--teal); color: var(--teal-ink); }
+  .btn.ghost { background: transparent; border: 1.5px solid var(--line-strong); color: var(--ink-soft); }
+
+  .num-pad-hint { border: 1.5px solid var(--line-strong); border-radius: 10px; padding: 13px; font-size: 20px; font-weight: 800; text-align: center; color: var(--ink-faint); }
+  .unit-badge { font-size: 11px; color: var(--ink-faint); font-weight: 700; }
+
+  .recap-box { background: var(--surface); border: 1.5px solid var(--line-strong); border-radius: 12px; padding: 11px 13px; margin-bottom: 8px; }
+  .recap-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--line); font-size: 11.5px; gap: 8px; }
+  .recap-row:last-child { border-bottom: none; }
+  .recap-row.total { font-weight: 800; }
+  .recap-row .k { color: var(--ink-soft); }
+  .recap-row .v { font-weight: 700; text-align: right; }
+
+  .chip { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
+  .chip.done { background: var(--good-bg); color: var(--good); }
+  .chip.partial { background: var(--warn-bg); color: var(--warn); }
+  .chip.missing { background: var(--surface); color: var(--ink-faint); border: 1px dashed var(--line-strong); }
+  .chip.crit { background: var(--crit-bg); color: var(--crit); }
+  .chip.info { background: var(--teal-soft); color: var(--teal); }
+
+  .list-card { border: 1px solid var(--line); border-radius: 11px; padding: 10px 11px; background: var(--surface); margin-bottom: 7px; }
+  .list-card .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .list-card .title { font-weight: 700; font-size: 12.5px; }
+  .list-card .meta { font-size: 10.5px; color: var(--ink-soft); margin-top: 1px; }
+  .list-card .stagerow { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
+
+  .section-tabs { display: flex; gap: 4px; margin-bottom: 11px; overflow-x: auto; }
+  .section-tabs .t { font-size: 9.8px; font-weight: 700; padding: 5px 8px; border-radius: 7px; color: var(--ink-faint); white-space: nowrap; }
+  .section-tabs .t.on { background: var(--teal); color: var(--teal-ink); }
+
+  .field-row { margin-bottom: 11px; }
+  .field-row label { font-size: 11px; font-weight: 700; color: var(--ink-soft); display: block; margin-bottom: 5px; }
+  .yn-row { display: flex; gap: 8px; }
+  .yn { flex: 1; border: 1.5px solid var(--line-strong); border-radius: 9px; padding: 8px; text-align: center; font-weight: 700; font-size: 12px; }
+  .yn.on { background: var(--good-bg); border-color: var(--good); color: var(--good); }
+  .yn.off-strong { background: var(--crit-bg); border-color: var(--crit); color: var(--crit); }
+
+  .readonly-inline { background: var(--surface); border: 1px dashed var(--line-strong); border-radius: 9px; padding: 8px 10px; font-size: 10.8px; color: var(--ink-soft); margin-bottom: 11px; }
+  .readonly-inline .tag2 { font-size: 9px; font-weight: 800; color: var(--teal); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .summary-figure { text-align: center; padding: 11px 5px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); }
+  .summary-figure .big { font-size: 18px; font-weight: 800; }
+  .summary-figure .lbl { font-size: 9.5px; color: var(--ink-soft); font-weight: 700; margin-top: 2px; }
+  .fig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+
+  /* ---------- browser frame ---------- */
+  .browser { width: 1020px; max-width: calc(100vw - 32px); background: var(--surface-2); border-radius: 14px; border: 1px solid var(--line-strong); box-shadow: var(--shadow); overflow: hidden; }
+  .browser .chrome { background: var(--surface); border-bottom: 1px solid var(--line); padding: 9px 14px; display: flex; align-items: center; gap: 8px; }
+  .browser .chrome .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line-strong); }
+  .browser .chrome .urlbar { flex: 1; background: var(--bg); border-radius: 7px; padding: 5px 10px; font-size: 11px; color: var(--ink-faint); margin-left: 10px; }
+  .admin-shell { display: flex; min-height: 440px; }
+  .admin-nav { width: 178px; background: var(--teal); color: var(--teal-ink); padding: 18px 12px; flex-shrink: 0; }
+  .admin-nav .who { font-size: 10.5px; opacity: 0.75; margin-bottom: 16px; }
+  .admin-nav .item { font-size: 12px; font-weight: 700; padding: 8px 9px; border-radius: 8px; margin-bottom: 3px; opacity: 0.85; }
+  .admin-nav .item.on { background: rgba(255,255,255,0.14); opacity: 1; }
+  .admin-main { flex: 1; padding: 18px 22px; overflow-x: auto; }
+  .admin-main h4 { margin: 0 0 3px; font-size: 15.5px; }
+  .admin-main .sub { color: var(--ink-soft); font-size: 11.5px; margin-bottom: 13px; }
+
+  table.admintable { width: 100%; border-collapse: collapse; font-size: 11.5px; min-width: 640px; }
+  table.admintable th { text-align: left; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint); padding: 0 8px 7px; border-bottom: 1.5px solid var(--line-strong); font-weight: 700; }
+  table.admintable td { padding: 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  table.admintable tr:last-child td { border-bottom: none; }
+  .prodname { font-weight: 700; }
+  .prodmeta { color: var(--ink-soft); font-size: 10px; }
+
+  .detail-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; }
+  .detail-block { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; }
+  .detail-block h5 { margin: 0 0 7px; font-size: 11.5px; display: flex; justify-content: space-between; align-items: center; }
+  .kv { display: flex; justify-content: space-between; font-size: 11px; padding: 4px 0; border-bottom: 1px dashed var(--line); gap: 8px; }
+  .kv:last-child { border-bottom: none; }
+  .kv .k { color: var(--ink-soft); }
+  .editbtn { font-size: 9.5px; font-weight: 700; color: var(--teal); border: 1px solid var(--line-strong); border-radius: 6px; padding: 3px 7px; white-space: nowrap; }
+
+  /* ---------- product category tags ---------- */
+  .cattag { display: inline-flex; align-items: center; gap: 5px; font-size: 9.5px; font-weight: 700; color: var(--ink-soft); }
+  .cattag .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .cattag.food .dot { background: var(--accent); }
+  .cattag.textile .dot { background: var(--teal); }
+  .cattag.oil .dot { background: var(--warn); }
+  .cattag.hygiene .dot { background: var(--good); }
+
+  /* ---------- role journeys ---------- */
+  .jlabel { max-width: 1260px; margin: 0 auto 10px; display: flex; align-items: center; gap: 11px; }
+  .jlabel .who { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; background: var(--accent-soft); color: var(--accent-ink); }
+  .jlabel .who.teal { background: var(--teal); color: var(--teal-ink); }
+  .jlabel .who.good { background: var(--good-bg); color: var(--good); }
+  .jlabel h4 { margin: 0; font-size: 15.5px; }
+  .jlabel p { margin: 1px 0 0; font-size: 12px; color: var(--ink-soft); }
+  .jrow { display: flex; align-items: flex-start; gap: 0; overflow-x: auto; max-width: 1260px; margin: 0 auto; padding: 4px 4px 20px; }
+  .jstep { display: flex; flex-direction: column; align-items: center; width: 144px; flex-shrink: 0; }
+  .jstep .num2 { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-weight: 800; font-size: 11px; display: flex; align-items: center; justify-content: center; margin-bottom: 9px; flex-shrink: 0; }
+  .jstep.outcome .num2 { background: var(--good); color: var(--surface-2); }
+  .jstep.warn .num2 { background: var(--warn); color: var(--surface-2); }
+  .jstep .mini { width: 130px; min-height: 138px; border: 1.5px solid var(--line-strong); border-radius: 12px; background: var(--surface); padding: 11px 10px; display: flex; flex-direction: column; gap: 7px; box-shadow: var(--shadow); }
+  .jstep.outcome .mini { border-color: var(--good); background: var(--good-bg); }
+  .jstep.warn .mini { border-color: var(--warn); background: var(--warn-bg); }
+  .jstep .mini .micon { font-size: 17px; }
+  .jstep .mini .mtxt { font-size: 10.6px; font-weight: 700; line-height: 1.32; }
+  .jstep .mini .mtag { align-self: flex-start; font-size: 8.8px; font-weight: 800; padding: 2px 6px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-ink); }
+  .jstep.outcome .mini .mtag { background: var(--good); color: var(--surface-2); }
+  .jstep.warn .mini .mtag { background: var(--warn); color: var(--surface-2); }
+  .jstep .lbl2 { font-size: 10.8px; font-weight: 800; text-align: center; margin-top: 9px; max-width: 140px; }
+  .jarrow { display: flex; align-items: center; justify-content: center; width: 18px; color: var(--ink-faint); font-size: 15px; flex-shrink: 0; margin-top: 73px; }
+
+  /* ---------- section grid headers ---------- */
+  .sec-h { display: flex; align-items: center; gap: 9px; margin: 20px auto 10px; max-width: 1260px; }
+  .sec-h .letter { width: 22px; height: 22px; border-radius: 6px; background: var(--teal); color: var(--teal-ink); font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .sec-h h4 { font-size: 13.5px; margin: 0; }
+  .sec-h .cnt { font-size: 11px; color: var(--ink-faint); }
+
+  /* ---------- scope/source toggles ---------- */
+  .scope-toggle { display: flex; gap: 6px; margin-bottom: 10px; }
+  .scope-toggle .opt { flex: 1; text-align: center; font-size: 10.5px; font-weight: 700; padding: 7px 4px; border-radius: 9px; border: 1.5px solid var(--line-strong); color: var(--ink-soft); }
+  .scope-toggle .opt.on { background: var(--teal); color: var(--teal-ink); border-color: var(--teal); }
+
+  /* ---------- priority matrix ---------- */
+  .matrixtable { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .matrixtable th { background: var(--surface); font-size: 9px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-faint); padding: 5px 6px; text-align: left; border-bottom: 1.5px solid var(--line-strong); }
+  .matrixtable td { padding: 6px; border-bottom: 1px solid var(--line); }
+  .matrixtable tr.sel td { background: var(--accent-soft); font-weight: 700; }
+  .matrixtable .radio { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--line-strong); display: inline-block; }
+  .matrixtable tr.sel .radio { background: var(--accent); border-color: var(--accent); }
+
+  /* ---------- critical gate ---------- */
+  .gate-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--line); font-size: 11px; gap: 6px; }
+  .gate-row:last-child { border-bottom: none; }
+  .gate-pill { font-size: 9.5px; font-weight: 800; padding: 3px 8px; border-radius: 999px; border: 1.5px solid var(--line-strong); }
+  .gate-pill.yes { background: var(--good-bg); color: var(--good); border-color: var(--good); }
+
+  /* ---------- readiness score ---------- */
+  .scoreboxes { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+  .scorebox { width: 21px; height: 21px; border-radius: 6px; border: 1.5px solid var(--line-strong); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: var(--ink-faint); flex-shrink: 0; }
+  .scorebox.on { background: var(--good); border-color: var(--good); color: #fff; }
+
+  /* ---------- traffic light ---------- */
+  .tlight { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; font-size: 12px; padding: 5px 11px; border-radius: 999px; }
+  .tlight.go { background: var(--good-bg); color: var(--good); }
+  .tlight.caution { background: var(--warn-bg); color: var(--warn); }
+  .tlight.stop { background: var(--crit-bg); color: var(--crit); }
+  .tlight .dot2 { width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+
+  /* ---------- calc chain ---------- */
+  .calc-chain { font-size: 10.6px; }
+  .calc-line { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed var(--line); gap: 6px; }
+  .calc-line:last-child { border-bottom: none; font-weight: 800; padding-top: 7px; }
+  .calc-line .op { color: var(--ink-faint); }
+
+  /* ---------- PO attachment ---------- */
+  .po-attach { border: 1.5px dashed var(--line-strong); border-radius: 9px; padding: 8px 10px; font-size: 10.2px; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; }
+
+  /* ---------- waterfall ---------- */
+  .waterfall { display: flex; flex-direction: column; gap: 5px; }
+  .wf-row { display: flex; align-items: center; gap: 6px; font-size: 10.2px; }
+  .wf-row .wf-label { width: 62px; color: var(--ink-soft); font-weight: 700; flex-shrink: 0; }
+  .wf-row .wf-bar-track { flex: 1; height: 14px; background: var(--line); border-radius: 4px; overflow: hidden; }
+  .wf-row .wf-bar { height: 100%; background: var(--accent); }
+  .wf-row .wf-val { width: 46px; text-align: right; font-weight: 800; flex-shrink: 0; }
+
+  .edge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 16px; max-width: 1260px; margin: 0 auto; }
+  .edge { border: 1px solid var(--line); border-radius: 13px; padding: 15px 16px; background: var(--surface); }
+  .edge .k2 { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-ink); background: var(--accent-soft); display: inline-block; padding: 3px 8px; border-radius: 999px; margin-bottom: 9px; }
+  .edge h5 { margin: 0 0 6px; font-size: 14px; }
+  .edge p { font-size: 12px; color: var(--ink-soft); margin: 0 0 10px; }
+  .edge .mini-flow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 11px; }
+  .edge .mini-flow .step { border: 1px solid var(--line-strong); border-radius: 8px; padding: 5px 9px; background: var(--surface-2); }
+  .edge .mini-flow .arrow { color: var(--ink-faint); }
+
+  footer.notes { max-width: 1260px; margin: 0 auto; padding: 10px clamp(16px,4vw,40px) 70px; color: var(--ink-soft); font-size: 12.5px; }
+  footer.notes h4 { color: var(--ink); font-size: 13px; margin: 0 0 8px; }
+  footer.notes ul { padding-left: 18px; margin: 0; }
+  footer.notes li { margin-bottom: 5px; }
+
+  /* ---------- circular data-flow diagram ---------- */
+  .cycle-wrap { position: relative; width: 500px; max-width: 100%; height: 500px; margin: 10px auto 6px; }
+  .cycle-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .cycle-line { stroke: var(--line-strong); stroke-width: 2.5; fill: none; }
+  .cycle-svg .arrowhead { fill: var(--line-strong); }
+  .cycle-node { position: absolute; width: 168px; transform: translate(-50%, -50%); text-align: center; }
+  .cycle-node .cn-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--surface); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 8px; box-shadow: var(--shadow); }
+  .cycle-node .cn-title { font-size: 12.5px; font-weight: 800; margin-bottom: 3px; }
+  .cycle-node .cn-desc { font-size: 10.5px; color: var(--ink-soft); line-height: 1.35; }
+  .cycle-node .cn-num { position: absolute; top: -2px; left: 50%; transform: translateX(18px); width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .cycle-loop-note { max-width: 520px; margin: 4px auto 0; text-align: center; font-size: 12px; color: var(--ink-soft); }
+  .cycle-loop-note b { color: var(--ink); }
+
+  /* ---------- hierarchy tree ---------- */
+  .tree-row { display: flex; align-items: stretch; gap: 10px; max-width: 1260px; margin: 0 auto 8px; overflow-x: auto; padding-bottom: 6px; }
+  .tree-col { flex: 0 0 auto; width: 200px; display: flex; flex-direction: column; gap: 8px; }
+  .tree-col .tree-col-h { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-faint); padding: 0 2px; }
+  .tree-item { border: 1.5px solid var(--line-strong); border-radius: 10px; padding: 9px 10px; background: var(--surface); font-size: 11.5px; }
+  .tree-item .ti-name { font-weight: 800; }
+  .tree-item .ti-meta { font-size: 10px; color: var(--ink-soft); margin-top: 2px; }
+  .tree-item.on { border-color: var(--accent); background: var(--accent-soft); }
+  .tree-item.dim { opacity: 0.55; }
+  .tree-item.empty { border-style: dashed; color: var(--ink-faint); text-align: center; }
+  .tree-chevron { display: flex; align-items: center; justify-content: center; color: var(--ink-faint); font-size: 16px; flex: 0 0 auto; width: 16px; }
+  .count-pill { font-size: 9.5px; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: var(--teal-soft); color: var(--teal); }
+  .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .filter-chip { font-size: 10.5px; font-weight: 700; padding: 5px 11px; border-radius: 999px; border: 1.5px solid var(--line-strong); color: var(--ink-soft); }
+  .filter-chip.on { background: var(--teal); color: var(--teal-ink); border-color: var(--teal); }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="brand">
+    <span class="mark">🌾</span>
+    <div><h1 class="display">AJA DDU Builder</h1><div class="sub">Screen design — every role, every stage, every field</div></div>
+  </div>
+  <nav>
+    <a href="#circle">How it connects</a>
+    <a href="#hierarchy">Block → Vatika → DDU</a>
+    <a href="#journeys">Journeys</a>
+    <a href="#kra">KRAs &amp; Transparency</a>
+    <a href="#stage1">Stage 1</a>
+    <a href="#merge">Merging Vatikas</a>
+    <a href="#stage2">Stage 2</a>
+    <a href="#econ">Cost economics</a>
+    <a href="#stage3">Stage 3</a>
+    <a href="#mitra">Mitra</a>
+    <a href="#dhawak">Dhawak</a>
+    <a href="#admin">Admin</a>
+    <a href="#edge">Edge cases</a>
+  </nav>
+</header>
+
+<div class="intro">
+  <span class="eyebrow">Design pass · full system</span>
+  <h2 class="display">Many blocks, many villages, many products — and a DDU can span more than one village.</h2>
+  <p>
+    A Block holds several Vatikas; each Vatika surfaces several products; a product
+    that clears assessment and pricing becomes a DDU — usually for one Vatika, but
+    when one village can't cover the order alone, two or more can pool their
+    Vaibhavis into a single merged DDU instead. The sections just below lay that out
+    before anything else: how the five stages feed each other in a loop, how Block,
+    Vatika, product and DDU nest inside one another, and exactly how a merge gets
+    built. Everything after that — role journeys, then each stage in detail — sits
+    on top of that map.
+  </p>
+</div>
+
+<!-- ================= HOW IT CONNECTS (CIRCLE) ================= -->
+<section class="track" id="circle">
+  <div class="track-head">
+    <div><h3 class="display">How the pieces connect</h3>
+      <p>Not a one-way pipeline — a loop. What a live DDU sells teaches the next round of opportunity mapping where to look.</p>
+    </div>
+  </div>
+
+  <div class="cycle-wrap">
+    <svg class="cycle-svg" viewBox="0 0 500 500">
+      <defs>
+        <marker id="arrowhd" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path class="arrowhead" d="M0,0 L0,6 L8,3 z"></path>
+        </marker>
+      </defs>
+      <path class="cycle-line" marker-end="url(#arrowhd)" d="M275,80 L419,178"></path>
+      <path class="cycle-line" marker-end="url(#arrowhd)" d="M431,216 L378,390"></path>
+      <path class="cycle-line" marker-end="url(#arrowhd)" d="M340,412 L160,412"></path>
+      <path class="cycle-line" marker-end="url(#arrowhd)" d="M122,390 L69,216"></path>
+      <path class="cycle-line" marker-end="url(#arrowhd)" d="M81,178 L225,80" style="stroke:var(--accent); stroke-dasharray:5 4;"></path>
+    </svg>
+    <div class="cycle-node" style="left:250px; top:60px;"><div class="cn-icon">🔍<span class="cn-num">1</span></div><div class="cn-title">Opportunity Mapping</div><div class="cn-desc">Vatika + Block, Market + Institution surveys surface product ideas</div></div>
+    <div class="cycle-node" style="left:431px; top:191px;"><div class="cn-icon">🧪<span class="cn-num">2</span></div><div class="cn-title">Production Assessment</div><div class="cn-desc">Priority → Critical → Sample → Readiness decides what's makeable</div></div>
+    <div class="cycle-node" style="left:362px; top:404px;"><div class="cn-icon">💰<span class="cn-num">3</span></div><div class="cn-title">Cost Economics</div><div class="cn-desc">Retail &amp; institution price check decides what's viable</div></div>
+    <div class="cycle-node" style="left:138px; top:404px;"><div class="cn-icon">🧾<span class="cn-num">4</span></div><div class="cn-title">DDU Design</div><div class="cn-desc">Real buyers, suppliers, production, money &amp; role margins</div></div>
+    <div class="cycle-node" style="left:69px; top:191px;"><div class="cn-icon">📊<span class="cn-num">5</span></div><div class="cn-title">Live DDU &amp; Sales</div><div class="cn-desc">Running demand vs. capacity, profit, margin split</div></div>
+  </div>
+  <div class="cycle-loop-note">The dashed arrow closes the loop: <b>what a live DDU actually sells, and which products match across a Block's Vatikas, feed straight back into where the next Opportunity Mapping survey looks</b> — and sometimes into merging two villages into one larger DDU instead of surveying them separately.</div>
+</section>
+
+<hr class="div"/>
+
+<!-- ================= HIERARCHY: BLOCK → VATIKA → PRODUCT → DDU ================= -->
+<section class="track" id="hierarchy">
+  <div class="track-head">
+    <div><h3 class="display">Block → Vatika → Product → DDU</h3>
+      <p>One Block holds several Vatikas; one Vatika surfaces several products; one product that clears assessment and pricing becomes one DDU. Browse the containment, then see every DDU flattened into one list.</p>
+    </div>
+  </div>
+
+  <div class="card" style="max-width:1000px; margin:0 auto 20px;"><span class="note" style="max-width:none; font-size:12.5px;"><b>The convention, fixed everywhere in the app — code, copy, and this document:</b> one Vatika is exactly one village. One Block contains several Vatikas (several villages). One District contains several Blocks. Never the reverse, never a shortcut past a level — a Vasuki can cover several Blocks, but a Block is never smaller than the Vatikas inside it.</span></div>
+
+  <div class="sec-h" style="margin-top:0;"><span class="letter">⚏</span><h4>Drill down, one level at a time</h4><span class="cnt">tap a column to narrow the next</span></div>
+  <div class="tree-row">
+    <div class="tree-col">
+      <div class="tree-col-h">Blocks (2)</div>
+      <div class="tree-item on"><div class="ti-name">Ranchi-East</div><div class="ti-meta">5 Vatikas · 14 products</div></div>
+      <div class="tree-item"><div class="ti-name">Ranchi-West</div><div class="ti-meta">4 Vatikas · 9 products</div></div>
+    </div>
+    <div class="tree-chevron">›</div>
+    <div class="tree-col">
+      <div class="tree-col-h">Vatikas in Ranchi-East (5)</div>
+      <div class="tree-item on"><div class="ti-name">Bishunpur</div><div class="ti-meta">3 products · 1 DDU live</div></div>
+      <div class="tree-item"><div class="ti-name">Ratanpur</div><div class="ti-meta">2 products · 0 live</div></div>
+      <div class="tree-item"><div class="ti-name">Devgaon</div><div class="ti-meta">4 products · 2 live</div></div>
+      <div class="tree-item"><div class="ti-name">Sonpur</div><div class="ti-meta">5 products · 1 live</div></div>
+      <div class="tree-item empty">Chandpur — 0 products, not yet staffed</div>
+    </div>
+    <div class="tree-chevron">›</div>
+    <div class="tree-col">
+      <div class="tree-col-h">Products in Bishunpur (3)</div>
+      <div class="tree-item on"><div class="ti-name">🫙 Amla Murabba</div><div class="ti-meta"><span class="chip done">DDU live</span></div></div>
+      <div class="tree-item"><div class="ti-name">👜 Cloth Tote Bags</div><div class="ti-meta"><span class="chip crit">Priced STOP</span></div></div>
+      <div class="tree-item dim"><div class="ti-name">🛢️ Mustard Oil</div><div class="ti-meta"><span class="chip crit">Dropped, Stage 2</span></div></div>
+    </div>
+    <div class="tree-chevron">›</div>
+    <div class="tree-col">
+      <div class="tree-col-h">Amla Murabba → its DDU</div>
+      <div class="tree-item on" style="padding:12px;">
+        <div class="ti-name" style="margin-bottom:6px;">DDU: Bishunpur_Amla-Murabba</div>
+        <div class="kv"><span class="k">Stage reached</span><span>3 · Live</span></div>
+        <div class="kv"><span class="k">Monthly demand</span><span class="num">160</span></div>
+        <div class="kv"><span class="k">Monthly profit</span><span class="num">₹9,600</span></div>
+        <div class="kv"><span class="k">Vasuki / Mitra / Dhawak</span><span>Rekha / Deepak / Suresh</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="max-width:900px; margin:6px auto 26px;"><span class="note"><b>One screen, four levels of "how many."</b> Pick a different Block or Vatika in an earlier column and the columns to its right refresh — this is the same containment as the URL path <span class="mono">admin.ajaddu.in/blocks/ranchi-east/vatikas/bishunpur/products/amla-murabba</span>.</span></div>
+
+  <div class="sec-h"><span class="letter">Σ</span><h4>Every DDU, flattened</h4><span class="cnt">filterable by Block and by Vatika</span></div>
+  <div class="rail">
+    <div class="card">
+      <span class="capline">Master DDU list</span>
+      <div class="browser">
+        <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="urlbar">admin.ajaddu.in / ddus</div></div>
+        <div class="admin-shell" style="display:block; min-height:auto;">
+          <div class="admin-main" style="padding:20px 24px;">
+            <h4 class="display">All DDUs, every Block, every Vatika</h4>
+            <div class="sub">One flat list — the same records as the drill-down above, with no containment to click through.</div>
+            <div class="filter-row">
+              <span class="filter-chip on">All Blocks</span><span class="filter-chip">Ranchi-East</span><span class="filter-chip">Ranchi-West</span>
+              <span class="filter-chip on" style="margin-left:14px;">All statuses</span><span class="filter-chip">Live</span><span class="filter-chip">Stopped</span><span class="filter-chip">In assessment</span><span class="filter-chip">Dropped</span>
+            </div>
+            <table class="admintable">
+              <thead><tr><th>Product / DDU</th><th>Vatika(s)</th><th>Block</th><th>Stage reached</th><th>Status</th><th>Monthly profit</th></tr></thead>
+              <tbody>
+                <tr><td class="prodname">Amla Murabba</td><td>Bishunpur</td><td>Ranchi-East</td><td>3 · DDU Design</td><td><span class="chip done">Live</span></td><td class="num">₹9,600</td></tr>
+                <tr><td class="prodname">Mango Pickle</td><td>Devgaon</td><td>Ranchi-East</td><td>3 · DDU Design</td><td><span class="chip done">Live</span></td><td class="num">₹7,200</td></tr>
+                <tr><td class="prodname">Handloom Stoles</td><td>Sonpur</td><td>Ranchi-East</td><td>3 · DDU Design</td><td><span class="chip done">Live</span></td><td class="num">₹5,400</td></tr>
+                <tr style="background:var(--tealsoft);"><td class="prodname">Sal Leaf Plates <span class="chip info">🔗 Merged</span></td><td>Devgaon + Sonpur</td><td>Ranchi-East</td><td>3 · DDU Design</td><td><span class="chip done">Live</span></td><td class="num">₹1,377</td></tr>
+                <tr><td class="prodname">Cloth Tote Bags</td><td>Bishunpur</td><td>Ranchi-East</td><td>Cost economics</td><td><span class="chip crit">Stopped</span></td><td class="num">—</td></tr>
+                <tr><td class="prodname">Sanitary Pads</td><td>Ratanpur</td><td>Ranchi-East</td><td>2 · Assessment</td><td><span class="chip partial">In assessment</span></td><td class="num">—</td></tr>
+                <tr><td class="prodname">Mustard Oil</td><td>Bishunpur</td><td>Ranchi-East</td><td>2 · Assessment</td><td><span class="chip crit">Dropped</span></td><td class="num">—</td></tr>
+                <tr><td class="prodname">Millet Flour</td><td>Manpur</td><td>Ranchi-West</td><td>3 · DDU Design</td><td><span class="chip done">Live</span></td><td class="num">₹6,100</td></tr>
+                <tr><td class="prodname">Neem Soap</td><td>Kesla</td><td>Ranchi-West</td><td>Cost economics</td><td><span class="chip partial">GO, awaiting Stage 3</span></td><td class="num">pending</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="note" style="max-width:560px;"><b>9 DDUs across 2 Blocks and 7 Vatikas</b> — one of them, Sal Leaf Plates, is a single row spanning two Vatikas: proof a Block can out-produce any one village in it, and that the app now builds that shared DDU, not just flags it. Full walkthrough in <a href="#merge" style="color:var(--teal);">Merging Vatikas</a> below.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ================= ROLE JOURNEYS ================= -->
+<section class="track" id="journeys">
+  <div class="track-head">
+    <div><h3 class="display">Role-wise, end to end</h3>
+      <p>Every role sits at its own level in <b>District → Block → Vatika</b> — not "whichever villages this person happens to touch." That level is what the chip next to each name below means:
+        <span class="chip partial">District</span> Dhawak ·
+        <span class="chip info">Block</span> Vasuki &amp; Vidushi ·
+        <span class="chip done">Village</span> SWSM &amp; Mitra.
+        SWSM's path also runs through a real assessment and a price check before Stage 3 ever opens.</p>
+    </div>
+  </div>
+
+  <div class="jlabel"><span class="who">👩🏽</span><div><h4 class="display">Rekha — Vasuki <span class="chip info">Block level</span></h4><p>Assigned to a Block, not one village — runs market surveys across every Vatika in Ranchi-East; builds Stage 3 once a product clears pricing.</p></div></div>
+  <div class="jrow">
+    <div class="jstep"><div class="num2">1</div><div class="mini"><span class="micon">🌾</span><span class="mtxt">Pick your name</span><span class="mtag">Rekha ✓</span></div><div class="lbl2">Login</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">2</div><div class="mini"><span class="micon">🗺️</span><span class="mtxt">Vatika: Bishunpur</span><span class="mtag">scope fixed</span></div><div class="lbl2">Pick village</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">3</div><div class="mini"><span class="micon">🏪</span><span class="mtxt">Visit 3 Category B shops</span><span class="mtag">Market source</span></div><div class="lbl2">Choose source</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">4</div><div class="mini"><span class="micon">📝</span><span class="mtxt">Log 12 products this visit</span><span class="mtag">repeating ledger</span></div><div class="lbl2">Add products</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">5</div><div class="mini"><span class="micon">📈</span><span class="mtxt">Ranked for SWSM to assess</span><span class="mtag">auto-tallied</span></div><div class="lbl2">Finish visit</div></div>
+    <div class="jarrow">⋯</div>
+    <div class="jstep"><div class="num2">6</div><div class="mini"><span class="micon">🔔</span><span class="mtxt">Passed Stage 2 + priced viable</span><span class="mtag">days later</span></div><div class="lbl2">Notified</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">7</div><div class="mini"><span class="micon">🧾</span><span class="mtxt">Buyers, suppliers, PO photos</span><span class="mtag">Stage 3</span></div><div class="lbl2">Build the DDU</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep outcome"><div class="num2">✓</div><div class="mini"><span class="micon">🏁</span><span class="mtxt">DDU live, margins split, ₹9.6k/mo profit</span><span class="mtag">outcome</span></div><div class="lbl2">DDU live</div></div>
+  </div>
+
+  <div class="jlabel"><span class="who">👩🏽‍🦱</span><div><h4 class="display">Sunita — Vidushi <span class="chip info">Block level</span></h4><p>Same block-level reach as Vasuki, same tools; also covers Institution-side discovery.</p></div></div>
+  <div class="jrow">
+    <div class="jstep"><div class="num2">1</div><div class="mini"><span class="micon">🌾</span><span class="mtxt">Pick your name</span><span class="mtag">Sunita ✓</span></div><div class="lbl2">Login</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">2</div><div class="mini"><span class="micon">🏥</span><span class="mtxt">Hospitals, schools, dhabas</span><span class="mtag">Institution source</span></div><div class="lbl2">Choose source</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">3</div><div class="mini"><span class="micon">📋</span><span class="mtxt">Institution, volume, buying price</span><span class="mtag">per institution</span></div><div class="lbl2">Log a finding</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep outcome"><div class="num2">✓</div><div class="mini"><span class="micon">🏁</span><span class="mtxt">Bulk-buyer demand feeds the same ranking</span><span class="mtag">outcome</span></div><div class="lbl2">Merged with Market data</div></div>
+  </div>
+
+  <div class="jlabel"><span class="who teal">🧑🏽‍💼</span><div><h4 class="display">Manoj — SWSM <span class="chip done">Village level</span></h4><p>Assigned to specific Vatikas, not a whole Block — covers 5 named villages in Ranchi-East; a second SWSM, Kiran, covers Ranchi-West's 4. Assessment, priority, price check — the whole gate lives with whichever SWSM owns that village.</p></div></div>
+  <div class="jrow">
+    <div class="jstep"><div class="num2">1</div><div class="mini"><span class="micon">🌾</span><span class="mtxt">Pick your name</span><span class="mtag">Manoj ✓</span></div><div class="lbl2">Login</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">2</div><div class="mini"><span class="micon">📥</span><span class="mtxt">Vatika + Block queue</span><span class="mtag">both scopes</span></div><div class="lbl2">Dashboard</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">3</div><div class="mini"><span class="micon">📋</span><span class="mtxt">Demand, raw material, training, support</span><span class="mtag">Part A</span></div><div class="lbl2">Basic info</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">4</div><div class="mini"><span class="micon">🎯</span><span class="mtxt">Where from × where sold</span><span class="mtag">Part B, 1–6</span></div><div class="lbl2">Priority level</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">5</div><div class="mini"><span class="micon">🚦</span><span class="mtxt">Packaging + producible — both must pass</span><span class="mtag">Part C gate</span></div><div class="lbl2">Critical check</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">6</div><div class="mini"><span class="micon">🧪</span><span class="mtxt">Sample ready? Skip to Stage 3</span><span class="mtag">Part D</span></div><div class="lbl2">Sample check</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">7</div><div class="mini"><span class="micon">💰</span><span class="mtxt">Cost breakdown → retail/institution gap</span><span class="mtag">new step</span></div><div class="lbl2">Cost economics</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep outcome"><div class="num2">✓</div><div class="mini"><span class="micon">🏁</span><span class="mtxt">GO → Stage 3 unlocks · STOP → product dropped</span><span class="mtag">outcome</span></div><div class="lbl2">Procurement call</div></div>
+  </div>
+
+  <div class="jlabel"><span class="who good">🧑🏽‍🌾</span><div><h4 class="display">Deepak — Mitra <span class="chip done">Village level</span></h4><p>Assigned to one specific Vatika (Bishunpur) — reads support needs, logs activation.</p></div></div>
+  <div class="jrow">
+    <div class="jstep"><div class="num2">1</div><div class="mini"><span class="micon">🌾</span><span class="mtxt">Pick your name</span><span class="mtag">Deepak ✓</span></div><div class="lbl2">Login</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">2</div><div class="mini"><span class="micon">📋</span><span class="mtxt">My assigned DDUs</span><span class="mtag">dashboard</span></div><div class="lbl2">Dashboard</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">3</div><div class="mini"><span class="micon">🎓</span><span class="mtxt">Trainer, tech expert needed</span><span class="mtag">from Part A</span></div><div class="lbl2">See support needs</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep outcome"><div class="num2">✓</div><div class="mini"><span class="micon">🏁</span><span class="mtxt">Vaibhavis ready to start</span><span class="mtag">outcome</span></div><div class="lbl2">Activation logged</div></div>
+  </div>
+
+  <div class="jlabel"><span class="who good">🚲</span><div><h4 class="display">Suresh — Dhawak <span class="chip partial">District level</span></h4><p>Broadest reach of any field role — assigned to the whole Ranchi district, every Block and Vatika in it. Sees his own delivery margin %, not just the route.</p></div></div>
+  <div class="jrow">
+    <div class="jstep"><div class="num2">1</div><div class="mini"><span class="micon">🌾</span><span class="mtxt">Pick your name</span><span class="mtag">Suresh ✓</span></div><div class="lbl2">Login</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">2</div><div class="mini"><span class="micon">📦</span><span class="mtxt">Sharma Kirana · 10 units · weekly</span><span class="mtag">from Demand ledger</span></div><div class="lbl2">View a delivery</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep outcome"><div class="num2">✓</div><div class="mini"><span class="micon">🏁</span><span class="mtxt">Delivered · his 5% margin recorded</span><span class="mtag">outcome</span></div><div class="lbl2">Confirmed</div></div>
+  </div>
+
+  <div class="jlabel"><span class="who teal">🧑🏽‍💻</span><div><h4 class="display">Priya — Backend / Ops</h4><p>Reconciles Block-level opportunities against Vatika DDUs.</p></div></div>
+  <div class="jrow">
+    <div class="jstep"><div class="num2">1</div><div class="mini"><span class="micon">🔐</span><span class="mtxt">Ops sign-in</span><span class="mtag">separate portal</span></div><div class="lbl2">Admin login</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">2</div><div class="mini"><span class="micon">🏘️</span><span class="mtxt">Block: Ranchi-East, 5 Vatikas</span><span class="mtag">village-wise</span></div><div class="lbl2">Vatikas overview</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">3</div><div class="mini"><span class="micon">🔗</span><span class="mtxt">3 of 5 Vatikas already surveying it</span><span class="mtag">Block↔Vatika match</span></div><div class="lbl2">Check overlap</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="num2">4</div><div class="mini"><span class="micon">💰</span><span class="mtxt">Review a STOP call, override if needed</span><span class="mtag">cost economics</span></div><div class="lbl2">Audit pricing</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep outcome"><div class="num2">✓</div><div class="mini"><span class="micon">🏁</span><span class="mtxt">Larger shared DDU proposed across Vatikas</span><span class="mtag">outcome</span></div><div class="lbl2">Block DDU flagged</div></div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ================= KRAs & TRANSPARENCY ================= -->
+<section class="track" id="kra">
+  <div class="track-head">
+    <div><h3 class="display">Roles, KRAs &amp; the transparency line</h3>
+      <p>The rule behind every screen in this app: <b>full transparency, boundaried KRAs.</b> Anyone can see the data that gives their own job context — but each role edits only its own Key Result Area, and a Home page only ever instructs you on <i>your</i> KRA, never someone else's.</p>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="card" style="max-width:1220px;">
+      <div class="browser" style="width:1180px;">
+        <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="urlbar">Key Result Areas, by role and level</div></div>
+        <div class="admin-shell" style="display:block; min-height:auto;">
+          <div class="admin-main" style="padding:18px 22px;">
+            <table class="admintable">
+              <thead><tr><th>Role</th><th>Level</th><th>Home page instructs on</th><th>Can edit (KRA)</th><th>Can see, read-only (context)</th><th>Cannot see</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td class="prodname">Vasuki / Vidushi</td>
+                  <td><span class="chip info">Block</span></td>
+                  <td>Products needing a Stage 1 survey; my Stage 3 DDUs in progress</td>
+                  <td>Stage 1 (any Vatika in my Block), Stage 3 (any DDU whose Vatika is in my Block)</td>
+                  <td>Stage 2 result, Cost Economics verdict — so I know when Stage 3 opens</td>
+                  <td>Vatikas outside my Block(s); assignment policy; other Blocks' Stage 1 raw data</td>
+                </tr>
+                <tr>
+                  <td class="prodname">SWSM</td>
+                  <td><span class="chip done">Village</span></td>
+                  <td>Products needing Stage 2 or Cost Economics in my villages</td>
+                  <td>Stage 2, Cost Economics (my assigned Vatikas only)</td>
+                  <td>Stage 1 raw data (informs Part A), Stage 3 progress (to see where my call led)</td>
+                  <td>Villages outside my list; assignment policy; other SWSMs' villages</td>
+                </tr>
+                <tr>
+                  <td class="prodname">Mitra</td>
+                  <td><span class="chip done">Village</span></td>
+                  <td>DDUs I'm assigned to; support needs to action</td>
+                  <td>Activation log only — no form ownership</td>
+                  <td>External support needed (S2.19), my role assignment</td>
+                  <td>Cost Economics, Money, margin figures — not her KRA</td>
+                </tr>
+                <tr>
+                  <td class="prodname">Dhawak</td>
+                  <td><span class="chip partial">District</span></td>
+                  <td>This week's pickups — browsable by Vatika or by product</td>
+                  <td>Nothing form-wise — delivery status only</td>
+                  <td>Demand rows &amp; his own margin, for any DDU anywhere in his district</td>
+                  <td>Cost Economics internals, Stage 2 assessment, other roles' margins</td>
+                </tr>
+                <tr>
+                  <td class="prodname">Admin</td>
+                  <td>Global</td>
+                  <td>Everything needing correction, across every level</td>
+                  <td>Any record, any override; assignment policy (who covers what); product catalog</td>
+                  <td>Everything — including provenance (who filled what, when) before overriding</td>
+                  <td>— none —</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="note" style="max-width:900px;"><b>Note the asymmetry on purpose:</b> a Vasuki sees Stage 2's verdict but can't edit it; a Mitra sees support needs but never a rupee figure; a Dhawak sees every DDU's demand in his district but nothing about how its price was set. Nobody is ever blocked from the context their job needs — and nobody can touch what isn't theirs.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Home, front-loaded</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Hi, Rekha</div><div class="avatar">R</div></div>
+            <div class="readonly-inline" style="margin-top:2px;">Signed in as Vasuki. Block: Ranchi-East.</div>
+            <div class="fig-grid" style="margin-top:8px;">
+              <div class="summary-figure" style="background:var(--warn-bg); border-color:var(--warn);"><div class="big num" style="color:var(--warn);">3</div><div class="lbl">Needs you</div></div>
+              <div class="summary-figure" style="background:var(--good-bg); border-color:var(--good);"><div class="big num" style="color:var(--good);">4</div><div class="lbl">Live DDUs</div></div>
+              <div class="summary-figure"><div class="big num">2</div><div class="lbl">For awareness</div></div>
+              <div class="summary-figure" style="background:var(--accent-soft); border-color:var(--accent);"><div class="big num" style="color:var(--accent-ink);">1</div><div class="lbl">Not started</div></div>
+            </div>
+            <div style="font-size:10px; font-weight:800; text-transform:uppercase; color:var(--ink-faint); margin:12px 0 5px;">New DDU opportunities</div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="chip missing" style="border-style:solid;">🌾 Millet Flour</span></div>
+            <div class="spacer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>The whole point, up front:</b> what's done, what's waiting on you, and what's never been touched at all — before scrolling to a single row. "Not started" comes straight from the product catalog against this Block's own Stage 1/2/3 data, not a guess.</div>
+    </div>
+  </div>
+
+  <div class="sec-h" style="margin-top:26px;"><span class="letter">⚠</span><h4>Gaps this pass closes</h4><span class="cnt">found by walking the built app, not guessed</span></div>
+  <div class="edge-grid">
+    <div class="edge">
+      <span class="k2">Missing entry point</span>
+      <h5>Products could only ever be created by accident</h5>
+      <p>Stage 1 free-text entry was the only way a product came into existence — auto-created with a placeholder icon/category, no way to clean it up. Admin now gets a Products catalog: browse, fix category/icon/unit, or add one directly. Two entry points, same underlying table.</p>
+    </div>
+    <div class="edge">
+      <span class="k2">Missing entry point, then a save bug</span>
+      <h5>Assignment policy was read-only — then felt broken</h5>
+      <p>AdminUsers showed each person's District/Block/Vatika coverage but had no way to change it. An Assignments screen closed that gap — but its first cut needed a separate "Save" tap per row, easy to miss, so a toggle that hadn't been confirmed looked like it silently reverted. It now saves the instant you tap, same live-update feel as Cost Economics, with a brief "Saved ✓" flash.</p>
+    </div>
+    <div class="edge">
+      <span class="k2">Missing entry point</span>
+      <h5>Geography could be browsed but never grown</h5>
+      <p>Every screen could show a District, Block or Vatika that already existed in the seed data — none could create one. Blocks &amp; Vatikas now has "+ Add a district," "+ Add a Block" under each district, and "+ Add a Vatika (village)" inside a Block's own page — each new unit appears the instant it's created, no page reload needed.</p>
+    </div>
+    <div class="edge">
+      <span class="k2">Uninstructed home page, part 2</span>
+      <h5>Home showed what existed — not what's new or still missing</h5>
+      <p>Even after the KRA banner and "needs you" split, Home only ever listed products that already had at least one stage filled in. A product from the catalog nobody had surveyed yet, anywhere in your Block or village, was invisible. Home now opens with a count strip — needs you, live, for awareness, not started — and a "new DDU opportunities" row naming exactly which catalog products are still unsurveyed in your own area.</p>
+    </div>
+    <div class="edge">
+      <span class="k2">Desktop-only</span>
+      <h5>Admin only really worked at a desk</h5>
+      <p>The Admin sidebar collapsed to a cramped single row on a phone with no visible way to log out, and no page below it had been checked at phone width. Every Admin screen — dashboard, Blocks &amp; Vatikas, Products, Users, Assignments, DDU detail — now has a mobile top bar with a working log-out button, a horizontally-scrollable nav row, and tables that scroll inside their own frame instead of stretching the page.</p>
+    </div>
+    <div class="edge">
+      <span class="k2">No provenance</span>
+      <h5>Overriding a price with no idea who set it, or how it compares</h5>
+      <p>The Cost Economics override panel showed only the current numbers. It now shows who filled each input and when, plus — if the same product is priced elsewhere — a side-by-side of those other DDUs' verdicts, so Admin never overrides blind.</p>
+    </div>
+    <div class="edge">
+      <span class="k2">Flattened view</span>
+      <h5>District-level shouldn't mean one flat list</h5>
+      <p>Dhawak's "This week's pickups" was a single flat list regardless of how many Vatikas his district spans. It now groups by Vatika or by product, his choice — district level should mean *more* ways to slice the same data, not just a longer list.</p>
+    </div>
+    <div class="edge">
+      <span class="k2">Uninstructed home page</span>
+      <h5>Every role saw the same board</h5>
+      <p>Home showed all four stage chips for every product to every role alike, with no framing of which stage was actually this person's job. Home now opens with a one-line KRA reminder and separates "needs you" from "for your awareness" instead of one undifferentiated list.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ================= STAGE 1 ================= -->
+<section class="track" id="stage1">
+  <div class="track-head">
+    <span class="tag field">Stage 1 · Opportunity Mapping</span>
+    <div><h3 class="display">Two scopes × two sources</h3>
+      <p>Vatika-level (Vasuki/Vidushi reach) and Block-level (larger DDUs), each surveyed via Market visits and via Institutions.</p>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="card">
+      <span class="capline">Scope &amp; source</span>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Stage 1 · Start a survey</div><div class="avatar">R</div></div>
+            <div class="display" style="font-size:15px; font-weight:700; margin:6px 0 10px;">Where and what kind?</div>
+            <div class="scope-toggle"><div class="opt on">Vatika</div><div class="opt">Whole Block</div></div>
+            <div class="scope-toggle"><div class="opt on">Market visit</div><div class="opt">Institution</div></div>
+            <div class="readonly-inline" style="margin-top:4px;">Vatika-Market: visit at least 3 Category B shops. Priority: local brand + volume + willing shopkeeper.</div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn primary">Start logging shops</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>One flow, two toggles.</b> Same forms underneath; Block-scope just widens who's asked and adds a village-of-origin field per row.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Vatika · Market — add product</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Sharma Kirana · shop 1 of 3</div><div></div></div>
+            <div class="field-row"><label>Product name</label><div class="choice small" style="text-align:left;padding:9px 10px;">Amla Murabba</div></div>
+            <div class="choice-grid three" style="margin-bottom:11px;"><div class="choice small selected">Local</div><div class="choice small">Branded</div><div class="choice small">—</div></div>
+            <div class="field-row"><label>Unit / MRP</label><div class="num-pad-hint" style="font-size:15px;padding:9px;">250g jar · ₹120</div></div>
+            <div class="field-row"><label>Sells per week/month · shops selling</label><div class="num-pad-hint" style="font-size:15px;padding:9px;">30–100/wk · 2–3 shops</div></div>
+            <div class="field-row"><label>Seasonal sale?</label><div class="yn-row"><div class="yn">Yes</div><div class="yn on">No</div></div></div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn ghost">Skip</div><div class="btn primary">Save &amp; add next product</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Grouped, not one-per-screen.</b> A visit can log 20+ products — one compact entry per product beats nine separate taps each.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Visit ledger</span>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">This visit</div><div></div></div>
+            <div class="display" style="font-size:15px; font-weight:700; margin:6px 0 10px;">12 products logged</div>
+            <div class="list-card"><div class="top"><div class="title">Amla Murabba</div><span class="chip done">₹120</span></div><div class="meta">Sharma Kirana · 2–3 shops selling</div></div>
+            <div class="list-card"><div class="top"><div class="title">Mustard Oil</div><span class="chip done">₹185</span></div><div class="meta">Verma Medical · 4–6 shops selling</div></div>
+            <div class="list-card"><div class="top"><div class="title">Cloth Tote Bags</div><span class="chip done">₹10</span></div><div class="meta">Roadside stall · 1 shop selling</div></div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn ghost">+ Add product</div><div class="btn primary">Finish visit</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Raw input for SWSM,</b> not a finished ranking — Part B's priority matrix decides order, not shop-count alone.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Institution — add finding</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Institution visit</div><div></div></div>
+            <div class="field-row"><label>Institution</label><div class="choice small" style="text-align:left;padding:9px 10px;">St. Mary's Hospital</div></div>
+            <div class="choice-grid" style="margin-bottom:10px;"><div class="choice small selected">Hospital</div><div class="choice small">School</div><div class="choice small">Dhaba</div><div class="choice small">Gym</div></div>
+            <div class="field-row"><label>Product / brand / unit</label><div class="num-pad-hint" style="font-size:14px;padding:8px;">Sanitary Pads · Branded · pkt</div></div>
+            <div class="field-row"><label>Volume required (min–max) · price</label><div class="num-pad-hint" style="font-size:14px;padding:8px;">40–60 pkt/mo · ₹45</div></div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn ghost">Skip</div><div class="btn primary">Save &amp; add next</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Institutions are bulk buyers</b> — this feeds Stage 3's Demand ledger directly as a ready-made buyer lead.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Block · Institution</span>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Block-wide · Institution</div><div class="avatar teal">M</div></div>
+            <div class="display" style="font-size:15px; font-weight:700; margin:6px 0 10px;">Same form, one extra question</div>
+            <div class="list-card"><div class="top"><div class="title">Govt. School, Ratanpur</div><span class="chip info">Block finding</span></div><div class="meta">Sanitary Pads · 60 pkt/mo · ₹45</div></div>
+            <div class="field-row" style="margin-top:8px;"><label>Any Sakhya opportunity linked here?</label><div class="yn-row"><div class="yn on">Yes</div><div class="yn">No</div></div></div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn primary">Save finding</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Sakhya-opportunity flag</b> is Block-only — surfaces whether a livelihoods/SHG linkage exists beyond the product sale itself.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Block ↔ Vatika match</span>
+      <div class="browser">
+        <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="urlbar">admin.ajaddu.in / block-match / ranchi-east</div></div>
+        <div class="admin-shell">
+          <div class="admin-nav">
+            <div class="who">Ranchi-East Block</div>
+            <div class="item">Block survey</div>
+            <div class="item on">Vatika match</div>
+            <div class="item">Sakhya leads</div>
+          </div>
+          <div class="admin-main">
+            <h4 class="display">Products found at Block level, matched to Vatikas</h4>
+            <div class="sub">How many Vatika DDUs already touch each Block-level opportunity.</div>
+            <table class="admintable">
+              <thead><tr><th>Product</th><th>Found in Block survey</th><th>Also in Vatika Stage 1</th><th>Match</th><th>Read as</th></tr></thead>
+              <tbody>
+                <tr><td class="prodname">Sanitary Pads</td><td class="num">5 institutions</td><td class="num">2 of 5 Vatikas</td><td class="num">40%</td><td><span class="chip partial">Strong shared-DDU candidate</span></td></tr>
+                <tr><td class="prodname">Cloth Tote Bags</td><td class="num">3 businesses</td><td class="num">1 of 5 Vatikas</td><td class="num">20%</td><td><span class="chip missing">Early signal</span></td></tr>
+                <tr><td class="prodname">Amla Murabba</td><td class="num">1 business</td><td class="num">1 of 5 Vatikas</td><td class="num">20%</td><td><span class="chip missing">Vatika-scale only</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="note" style="max-width:540px;"><b>Directly answers "how many products connected with larger DDUs match Vatika DDUs."</b> High-match products are candidates for one bigger, block-wide DDU — see how that merge actually happens, below.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ================= MERGING VATIKAS INTO ONE DDU ================= -->
+<section class="track" id="merge">
+  <div class="track-head">
+    <span class="tag admin">Admin action</span>
+    <div><h3 class="display">Merging Vatikas into one DDU</h3>
+      <p>The match view above is a signal. This is the action — pooling two or more villages' Vaibhavis into one shared, larger business unit, because neither could cover the order alone.</p>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="card">
+      <span class="capline">1 · Build the merge</span>
+      <div class="browser">
+        <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="urlbar">admin.ajaddu.in / blocks / ranchi-east</div></div>
+        <div class="admin-shell">
+          <div class="admin-nav">
+            <div class="who">Signed in · Ops · Priya</div>
+            <div class="item">Products &amp; DDUs</div>
+            <div class="item on">Blocks &amp; Vatikas</div>
+            <div class="item">Users &amp; roles</div>
+          </div>
+          <div class="admin-main">
+            <h4 class="display">Merge Vatikas into one DDU</h4>
+            <div class="sub">Product: <b>Sal Leaf Plates</b> — only Vatikas that already passed Stage 2, with no Stage 3 data started, are selectable.</div>
+            <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+              <label style="display:flex; align-items:center; justify-content:space-between; border:1px solid var(--line); border-radius:9px; padding:8px 12px; font-size:12.5px;">
+                <span><input type="checkbox" checked style="margin-right:8px;">Devgaon</span><span class="chip done">Eligible</span>
+              </label>
+              <label style="display:flex; align-items:center; justify-content:space-between; border:1px solid var(--line); border-radius:9px; padding:8px 12px; font-size:12.5px;">
+                <span><input type="checkbox" checked style="margin-right:8px;">Sonpur</span><span class="chip done">Eligible</span>
+              </label>
+              <label style="display:flex; align-items:center; justify-content:space-between; border:1px dashed var(--line-strong); border-radius:9px; padding:8px 12px; font-size:12.5px; opacity:.5;">
+                <span><input type="checkbox" disabled style="margin-right:8px;">Bishunpur</span><span class="chip missing">No passing Stage 2</span>
+              </label>
+              <label style="display:flex; align-items:center; justify-content:space-between; border:1px dashed var(--line-strong); border-radius:9px; padding:8px 12px; font-size:12.5px; opacity:.5;">
+                <span><input type="checkbox" disabled style="margin-right:8px;">Chandpur</span><span class="chip missing">Not yet staffed</span>
+              </label>
+              <div class="btn primary" style="margin-top:4px;">Create merged DDU (2 Vatikas)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="note" style="max-width:520px;"><b>Devgaon alone makes 2,640/mo, Sonpur alone 1,200/mo</b> — a 3,000-unit institutional order needs both. That's the whole reason this control exists.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">2 · Each village enters its own production</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Devgaon · Stage 3</div><div></div></div>
+            <div class="readonly-inline"><span class="tag2">Merged DDU</span><br/>Devgaon + Sonpur pool production for this one shared plan.</div>
+            <div class="section-tabs"><span class="t">1 Demand</span><span class="t">2 Supplier</span><span class="t on">3 Production</span><span class="t">4 Money</span><span class="t">5 Roles</span></div>
+            <div class="list-card"><div class="top"><div class="title">DEVGAON</div></div><div class="meta">3 women · 40 units/day · 22 days → 2,640/mo</div></div>
+            <div class="list-card"><div class="top"><div class="title">SONPUR</div></div><div class="meta">2 women · 30 units/day · 20 days → 1,200/mo</div></div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn ghost">Save Production — Devgaon</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>One form per contributing Vatika,</b> not one shared number — each village's own women, output and days, summed automatically.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">3 · Each village keeps its own roles</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Devgaon · Stage 3</div><div></div></div>
+            <div class="section-tabs"><span class="t">1 Demand</span><span class="t">2 Supplier</span><span class="t">3 Production</span><span class="t">4 Money</span><span class="t on">5 Roles</span></div>
+            <div class="list-card"><div class="top"><div class="title">DEVGAON</div><span class="chip done">Dhawak 5%</span></div><div class="meta">Vasuki: Anjali (8%) · Mitra: Ramesh</div></div>
+            <div class="list-card"><div class="top"><div class="title">SONPUR</div><span class="chip done">Dhawak 5%</span></div><div class="meta">Vasuki: Anita (8%) · Mitra: Ramesh</div></div>
+            <div class="readonly-inline" style="margin-top:8px;">Demand, Supplier &amp; Cost, and Money are shared once across the whole merged DDU — only Production and Roles split by village.</div>
+            <div class="spacer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Different Vasuki per village</b> (Anjali for Devgaon, Anita for Sonpur) — Ramesh happens to be Mitra for both.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">4 · One shared summary</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">DDU Summary</div><div></div></div>
+            <div style="margin:2px 0 8px;"><div class="display" style="font-size:14px;font-weight:700;">🍽️ Sal Leaf Plates</div><div class="readonly-inline" style="margin-top:6px;"><span class="tag2">Merged</span> Devgaon + Sonpur</div></div>
+            <div class="fig-grid">
+              <div class="summary-figure"><div class="big num">3,000</div><div class="lbl">Monthly demand</div></div>
+              <div class="summary-figure"><div class="big num">3,840</div><div class="lbl">Monthly capacity</div></div>
+              <div class="summary-figure"><div class="big num">78%</div><div class="lbl">Capacity used</div></div>
+              <div class="summary-figure"><div class="big num">₹1,377</div><div class="lbl">Monthly profit</div></div>
+            </div>
+            <div class="waterfall" style="margin-top:12px;">
+              <div class="wf-row"><span class="wf-label">Producer</span><div class="wf-bar-track"><div class="wf-bar" style="width:80%;"></div></div><span class="wf-val num">₹4</span></div>
+              <div class="wf-row"><span class="wf-label">Dhawak</span><div class="wf-bar-track"><div class="wf-bar" style="width:4%;background:var(--good);"></div></div><span class="wf-val num">₹0</span></div>
+              <div class="wf-row"><span class="wf-label">Vasuki</span><div class="wf-bar-track"><div class="wf-bar" style="width:6%;background:var(--teal);"></div></div><span class="wf-val num">₹0</span></div>
+              <div class="wf-row"><span class="wf-label">Retailer</span><div class="wf-bar-track"><div class="wf-bar" style="width:20%;background:var(--warn);"></div></div><span class="wf-val num">₹1</span></div>
+              <div class="wf-row" style="border-top:1px dashed var(--line-strong); padding-top:6px;"><span class="wf-label" style="font-weight:800;">Retail MRP</span><div class="wf-bar-track" style="visibility:hidden;"></div><span class="wf-val num" style="font-weight:800;">₹5</span></div>
+            </div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn primary">Confirm DDU</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>2,640 + 1,200 = 3,840</b> capacity, summed across both villages automatically — one Vasuki couldn't see that total without this view.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">5 · Admin oversight of the merge</span>
+      <div class="browser">
+        <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="urlbar">admin.ajaddu.in / ddu / grp_salplates_de_so</div></div>
+        <div class="admin-shell">
+          <div class="admin-nav">
+            <div class="who">Signed in · Ops · Priya</div>
+            <div class="item">Products &amp; DDUs</div>
+            <div class="item on">DDU detail</div>
+            <div class="item">Users &amp; roles</div>
+          </div>
+          <div class="admin-main">
+            <h4 class="display">Devgaon + Sonpur — Sal Leaf Plates <span class="chip info" style="margin-left:6px;">🔗 Merged</span></h4>
+            <div class="sub">Every contributing Vatika's Stage 2 result, side by side.</div>
+            <div class="detail-grid">
+              <div class="detail-block">
+                <h5>Stage 2, per Vatika</h5>
+                <div class="kv"><span class="k">Devgaon</span><span>Priority 1 · Critical Pass · Readiness 7</span></div>
+                <div class="kv"><span class="k">Sonpur</span><span>Priority 1 · Critical Pass · Readiness 7</span></div>
+                <h5 style="margin-top:12px;">Production, per Vatika</h5>
+                <div class="kv"><span class="k">Devgaon</span><span class="num">2,640 / mo</span></div>
+                <div class="kv"><span class="k">Sonpur</span><span class="num">1,200 / mo</span></div>
+              </div>
+              <div class="detail-block">
+                <h5>Computed summary</h5>
+                <div class="kv"><span class="k">Monthly demand</span><span class="num">3,000</span></div>
+                <div class="kv"><span class="k">Monthly capacity</span><span class="num">3,840</span></div>
+                <div class="kv"><span class="k">Monthly profit</span><span class="num">₹1,377.00</span></div>
+                <h5 style="margin-top:12px;">Reassign roles <span class="editbtn">per Vatika</span></h5>
+                <div class="kv"><span class="k">Devgaon</span><span>Vasuki: Anjali</span></div>
+                <div class="kv"><span class="k">Sonpur</span><span>Vasuki: Anita</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="note" style="max-width:540px;"><b>Same page shape as any other DDU,</b> just with a per-Vatika breakdown wherever the underlying data is per-Vatika (Stage 2, Production, Roles) and one shared block wherever it isn't (Demand, Cost Economics).</div>
+    </div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ================= STAGE 2 ================= -->
+<section class="track" id="stage2">
+  <div class="track-head">
+    <span class="tag field">Stage 2 · Village Production Assessment</span>
+    <div><h3 class="display">Part A → E, in order</h3>
+      <p>Complete one product per pass. A critical fail stops it cold; a ready sample skips straight to Stage 3.</p>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="card">
+      <span class="capline">Part A</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Cloth Tote Bags · Bishunpur</div><div></div></div>
+            <div class="section-tabs"><span class="t on">A · Basic</span><span class="t">B · Priority</span><span class="t">C · Critical</span><span class="t">D · Sample</span><span class="t">E · Ready</span></div>
+            <div class="field-row"><label>Demand confirmed by market survey?</label><div class="yn-row"><div class="yn on">Yes</div><div class="yn">No</div></div></div>
+            <div class="field-row"><label>Main raw material needed</label><div class="choice small" style="text-align:left;padding:8px 10px;">Cotton cloth, thread</div></div>
+            <div class="field-row"><label>Raw material available in-village?</label><div class="yn-row"><div class="yn on">Yes</div><div class="yn">No</div></div></div>
+            <div class="field-row"><label>Trained Vaibhavis available?</label><div class="yn-row"><div class="yn">Yes</div><div class="yn on">No</div></div></div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn primary">Next: Priority level</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Basic Information</b> — demand, raw material, training and support needs, in one grouped screen.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Part B</span>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Priority Level</div><div></div></div>
+            <div class="section-tabs"><span class="t">A · Basic</span><span class="t on">B · Priority</span><span class="t">C · Critical</span><span class="t">D · Sample</span><span class="t">E · Ready</span></div>
+            <table class="matrixtable">
+              <thead><tr><th></th><th>Raw material</th><th>Market</th></tr></thead>
+              <tbody>
+                <tr class="sel"><td><span class="radio"></span> P1</td><td>Producer/Farmer</td><td>Local</td></tr>
+                <tr><td><span class="radio"></span> P2</td><td>Local market</td><td>Local</td></tr>
+                <tr><td><span class="radio"></span> P3</td><td>Outside market</td><td>Local</td></tr>
+                <tr><td><span class="radio"></span> P4</td><td>Producer/Farmer</td><td>Outside</td></tr>
+                <tr><td><span class="radio"></span> P5</td><td>Local market</td><td>Outside</td></tr>
+                <tr><td><span class="radio"></span> P6</td><td>Outside market</td><td>Outside</td></tr>
+              </tbody>
+            </table>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn primary">Next: Critical check</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Priority 1 auto-selected</b> here — local raw material sold locally is the highest-priority combination.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Part C</span>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Critical Check</div><div></div></div>
+            <div class="section-tabs"><span class="t">A · Basic</span><span class="t">B · Priority</span><span class="t on">C · Critical</span><span class="t">D · Sample</span><span class="t">E · Ready</span></div>
+            <div class="gate-row"><span>Packaging available / sourceable nearby</span><span class="gate-pill yes">YES</span></div>
+            <div class="gate-row"><span>Can be produced in the village</span><span class="gate-pill yes">YES</span></div>
+            <div class="recap-box" style="margin-top:10px; text-align:center; background:var(--good-bg); border-color:var(--good);">
+              <div style="font-weight:800; color:var(--good); font-size:13px;">✓ PROCEED NEXT</div>
+              <div style="font-size:10.5px; color:var(--ink-soft); margin-top:2px;">Both must be Yes — a single No stops the product here, regardless of Part B.</div>
+            </div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn primary">Next: Sample check</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>All-or-nothing gate.</b> One "No" here is a hard stop — no readiness score can rescue it.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Part D</span>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Sample Check</div><div></div></div>
+            <div class="section-tabs"><span class="t">A · Basic</span><span class="t">B · Priority</span><span class="t">C · Critical</span><span class="t on">D · Sample</span><span class="t">E · Ready</span></div>
+            <div class="field-row"><label>Already produced locally &amp; sample available?</label><div class="yn-row"><div class="yn">Yes</div><div class="yn on">No</div></div></div>
+            <div class="readonly-inline">No sample → continue to Part E, Readiness Check. (If Yes, this would skip straight to Stage 3 DDU Designing.)</div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn primary">Next: Readiness</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Fast path exists</b> — a ready sample skips Readiness scoring entirely.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Part E</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Readiness Check</div><div></div></div>
+            <div class="section-tabs"><span class="t">A · Basic</span><span class="t">B · Priority</span><span class="t">C · Critical</span><span class="t">D · Sample</span><span class="t on">E · Ready</span></div>
+            <div style="font-size:10.5px; color:var(--ink-soft); margin-bottom:8px;">Score each 0 or 1: cost stability, trainer, raw material now, workspace, electricity, water, storage.</div>
+            <div class="scoreboxes">
+              <div class="scorebox on">1</div><div class="scorebox on">1</div><div class="scorebox">0</div><div class="scorebox on">1</div><div class="scorebox on">1</div><div class="scorebox on">1</div><div class="scorebox on">1</div>
+            </div>
+            <div class="recap-box" style="margin-top:12px; text-align:center;">
+              <div style="font-size:22px; font-weight:800;">6 / 7</div>
+              <div style="font-size:10.5px; color:var(--ink-soft);">Readiness rating</div>
+            </div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn primary">Next: Cost economics</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Higher score, higher DDU priority</b> — used only when no sample exists yet.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Final ranking</span>
+      <div class="browser">
+        <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="urlbar">admin.ajaddu.in / bishunpur / final-ranking</div></div>
+        <div class="admin-shell">
+          <div class="admin-nav">
+            <div class="who">Bishunpur Vatika</div>
+            <div class="item">Assessments</div>
+            <div class="item on">Final ranking</div>
+            <div class="item">Cost economics</div>
+          </div>
+          <div class="admin-main">
+            <h4 class="display">Final Product List for DDU Selection</h4>
+            <div class="sub">Order by priority → drop Criticality fails → sample-ready selects directly → else use Readiness.</div>
+            <table class="admintable">
+              <thead><tr><th>Product</th><th>Priority</th><th>Criticality</th><th>Sample?</th><th>Readiness</th><th>Final</th></tr></thead>
+              <tbody>
+                <tr><td class="prodname">Amla Murabba</td><td class="num">1</td><td><span class="chip done">Pass</span></td><td>No</td><td class="num">6/7</td><td><span class="chip done">Selected</span></td></tr>
+                <tr><td class="prodname">Cloth Tote Bags</td><td class="num">1</td><td><span class="chip done">Pass</span></td><td>No</td><td class="num">6/7</td><td><span class="chip partial">Pending price check</span></td></tr>
+                <tr><td class="prodname">Mustard Oil</td><td class="num">3</td><td><span class="chip crit">Fail</span></td><td>—</td><td>—</td><td><span class="chip crit">Dropped</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="note" style="max-width:520px;"><b>Mustard Oil is dropped at Criticality</b>, not at a single "decision" field — the paper trail now shows exactly which gate it failed.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ================= COST ECONOMICS ================= -->
+<section class="track" id="econ">
+  <div class="track-head">
+    <span class="tag money">New · Cost Economics</span>
+    <div><h3 class="display">What price actually works?</h3>
+      <p>Runs after Stage 2 passes, before Stage 3 opens. SWSM finds the viable producer price against both retail and institution targets.</p>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="card">
+      <span class="capline">Default margins</span>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Margin settings</div><div class="avatar teal">M</div></div>
+            <div class="display" style="font-size:14.5px; font-weight:700; margin:6px 0 10px;">Applies to every product unless overridden</div>
+            <div class="recap-box">
+              <div class="recap-row"><span class="k">Retailer margin</span><span class="v num">20%</span></div>
+              <div class="recap-row"><span class="k">Vasuki margin</span><span class="v num">8%</span></div>
+              <div class="recap-row"><span class="k">Dhawak margin</span><span class="v num">5%</span></div>
+              <div class="recap-row"><span class="k">Producer margin</span><span class="v num">15%</span></div>
+              <div class="recap-row"><span class="k">GST</span><span class="v num">0%</span></div>
+              <div class="recap-row"><span class="k">Expected wastage</span><span class="v num">2%</span></div>
+            </div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn ghost">Edit defaults</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Org-wide config,</b> set once by Admin — same numbers behind every product's pricing calc unless SWSM overrides one for a specific DDU.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Product cost</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Cloth Tote Bags · cost</div><div></div></div>
+            <div class="calc-chain">
+              <div class="calc-line"><span>Raw material</span><span class="num">₹5.00</span></div>
+              <div class="calc-line"><span>Packaging</span><span class="num">₹0.50</span></div>
+              <div class="calc-line"><span>Direct labour</span><span class="num">₹0.50</span></div>
+              <div class="calc-line"><span>Manufacturing OH</span><span class="num">₹0.50</span></div>
+              <div class="calc-line"><span>Transport to hub</span><span class="num">₹0.00</span></div>
+              <div class="calc-line"><span class="op">+2% wastage →</span> Net Production Cost<span class="num">₹6.63</span></div>
+              <div class="calc-line"><span class="op">+15% margin →</span> Producer Margin ₹<span class="num">₹0.99</span></div>
+              <div class="calc-line"><span>Producer Selling Price</span><span class="num">₹7.62</span></div>
+            </div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn primary">Check retail &amp; institution fit</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Numbers entered once</b> — raw cost inputs only; wastage, margin ₹ and selling price are all computed.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Retail pricing — fails</span>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Retail viability</div><div></div></div>
+            <div class="calc-chain">
+              <div class="calc-line"><span>Competitor MRP</span><span class="num">₹10.00</span></div>
+              <div class="calc-line"><span class="op">−20% retailer →</span> Retail Purchase Target<span class="num">₹8.00</span></div>
+              <div class="calc-line"><span class="op">÷1.08 ÷1.05 →</span> Max Producer Price<span class="num">₹7.05</span></div>
+              <div class="calc-line"><span>vs. Producer Selling Price ₹7.62</span><span class="num" style="color:var(--crit);">−₹0.57</span></div>
+            </div>
+            <div style="text-align:center; margin-top:12px;"><span class="tlight stop"><span class="dot2"></span>DO NOT ONBOARD</span></div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn ghost">Check institution price too</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Negative gap.</b> The market won't bear a producer price this high once every margin is stacked on top.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Institution pricing — fails</span>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Institution viability</div><div></div></div>
+            <div class="calc-chain">
+              <div class="calc-line"><span>Target institution price</span><span class="num">₹8.00</span></div>
+              <div class="calc-line"><span class="op">÷1.08 ÷1.05 →</span> Max Producer Price<span class="num">₹7.05</span></div>
+              <div class="calc-line"><span>vs. Producer Selling Price ₹7.62</span><span class="num" style="color:var(--crit);">−₹0.57</span></div>
+            </div>
+            <div style="text-align:center; margin-top:12px;"><span class="tlight stop"><span class="dot2"></span>REJECT</span></div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn primary">See procurement dashboard</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>No margin skipped:</b> institution sales still carry Vasuki + Dhawak margins, just not a retailer's.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Procurement dashboard — STOP</span>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Cloth Tote Bags · verdict</div><div></div></div>
+            <div class="fig-grid" style="margin:8px 0 10px;">
+              <div class="summary-figure"><div class="big num">76%</div><div class="lbl">Producer share of MRP</div></div>
+              <div class="summary-figure"><div class="big num">✕</div><div class="lbl">Retail viability</div></div>
+              <div class="summary-figure"><div class="big num">✕</div><div class="lbl">Institution viability</div></div>
+              <div class="summary-figure" style="grid-column:span 2;"><span class="tlight stop"><span class="dot2"></span>⬤ STOP — DO NOT PROCURE</span></div>
+            </div>
+            <div class="readonly-inline">Product passed the Stage 2 assessment but fails on price. Options: renegotiate cost inputs, seek a higher-paying buyer, or shelve for now.</div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn ghost">Back to cost inputs</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Stage 3 does not open</b> on a STOP — this is the real gate the earlier "Suitable" label used to gesture at.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Procurement dashboard — GO</span>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Amla Murabba · verdict</div><div></div></div>
+            <div class="fig-grid" style="margin:8px 0 10px;">
+              <div class="summary-figure"><div class="big num">57%</div><div class="lbl">Producer share of MRP</div></div>
+              <div class="summary-figure"><div class="big num">✓</div><div class="lbl">Retail viability</div></div>
+              <div class="summary-figure"><div class="big num">✓</div><div class="lbl">Institution viability</div></div>
+              <div class="summary-figure" style="grid-column:span 2;"><span class="tlight go"><span class="dot2"></span>⬤ GO — PROCURE</span></div>
+            </div>
+            <div style="font-size:10.5px; color:var(--ink-faint); text-align:center;">Producer ₹68.03 vs retail cap ₹84.66, institution cap ₹79.36 — comfortable margin both ways.</div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn primary">Open Stage 3</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>This is what unlocks Stage 3</b> — the one product from this Vatika's assessment that's both ready and priced right.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ================= STAGE 3 ================= -->
+<section class="track" id="stage3">
+  <div class="track-head">
+    <span class="tag field">Stage 3 · DDU Design</span>
+    <div><h3 class="display">Buyers, suppliers, production, money, roles</h3>
+      <p>Demand and Supplier &amp; Cost are ledgers now — add a row per buyer, per raw material. Roles carry a margin, not just a name.</p>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="card">
+      <span class="capline">1 · Demand ledger</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Amla Murabba · Demand</div><div></div></div>
+            <div class="section-tabs"><span class="t on">1 Demand</span><span class="t">2 Supplier</span><span class="t">3 Production</span><span class="t">4 Money</span><span class="t">5 Roles</span></div>
+            <div class="list-card"><div class="top"><div><div class="title">Sharma Kirana</div><div class="meta">MoQ 10 · 40/mo · ₹120 · weekly</div></div><span class="chip done">Vaibhavi delivers</span></div></div>
+            <div class="po-attach">📎 Purchase_Order_SharmaKirana.jpg attached</div>
+            <div class="list-card" style="margin-top:8px;"><div class="top"><div><div class="title">Verma Medical</div><div class="meta">MoQ 15 · 15/mo · ₹115 · fortnightly</div></div><span class="chip done">Dhawak delivers</span></div></div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn ghost">+ Add buyer</div><div class="btn primary">Next: Supplier</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>PO photo, not digital PO.</b> A snapshot of the paper order is enough evidence — no structured e-PO required.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">2 · Supplier &amp; cost ledger</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Amla Murabba · Supplier</div><div></div></div>
+            <div class="section-tabs"><span class="t">1 Demand</span><span class="t on">2 Supplier</span><span class="t">3 Production</span><span class="t">4 Money</span><span class="t">5 Roles</span></div>
+            <div class="list-card"><div class="top"><div><div class="title">Amla (raw material)</div><div class="meta">₹40/kg · 200kg/mo · weekly</div></div></div><div class="meta">Supplier: Ram Farms, Bishunpur · stored in cold room</div></div>
+            <div class="list-card" style="margin-top:8px;"><div class="top"><div><div class="title">Glass jars (packaging)</div><div class="meta">₹5/pc · 400 pc/mo · monthly</div></div></div><div class="meta">Supplier: Ranchi Glassware · stored in godown</div></div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn ghost">+ Add material</div><div class="btn primary">Next: Production</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>A full supplier ledger</b> — who, where, cost, quantity, storage — feeding the monthly raw-material cost in Section 4.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">3 · Production</span>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Amla Murabba · Production</div><div></div></div>
+            <div class="section-tabs"><span class="t">1 Demand</span><span class="t">2 Supplier</span><span class="t on">3 Production</span><span class="t">4 Money</span><span class="t">5 Roles</span></div>
+            <div class="field-row"><label>Women producing</label><div class="num-pad-hint" style="font-size:17px;">4</div></div>
+            <div class="field-row"><label>Units per woman per day</label><div class="num-pad-hint" style="font-size:17px;">10</div></div>
+            <div class="field-row"><label>Working days per month</label><div class="num-pad-hint" style="font-size:17px;">22</div></div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn primary">Next: Money</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note">Simple by design — capacity = 4 × 10 × 22 = 880/month, computed downstream.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">4 · Money</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Amla Murabba · Money</div><div></div></div>
+            <div class="section-tabs"><span class="t">1 Demand</span><span class="t">2 Supplier</span><span class="t">3 Production</span><span class="t on">4 Money</span><span class="t">5 Roles</span></div>
+            <div class="field-row"><label>Tools to start (machines) ₹</label><div class="num-pad-hint" style="font-size:16px;">₹4,200</div></div>
+            <div class="field-row"><label>Raw material + packaging, one month ₹</label><div class="num-pad-hint" style="font-size:16px;">₹10,000</div></div>
+            <div class="field-row"><label>Cost to make ONE unit ₹</label><div class="num-pad-hint" style="font-size:16px;">₹68.03</div></div>
+            <div class="readonly-inline"><span class="tag2">From cost economics</span><br/>Vaibhavi selling price pre-filled at <b>₹68.03</b> — editable if the real deal differs.</div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn primary">Next: Delivery &amp; Roles</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>The producer price computed earlier</b> flows straight in — nothing recalculated by hand.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">5 · Delivery &amp; roles</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Amla Murabba · Roles</div><div></div></div>
+            <div class="section-tabs"><span class="t">1 Demand</span><span class="t">2 Supplier</span><span class="t">3 Production</span><span class="t">4 Money</span><span class="t on">5 Roles</span></div>
+            <div class="field-row"><label>Who delivers, at what margin?</label><div class="choice-grid"><div class="choice selected">Dhawak · 5%</div><div class="choice">Vaibhavi · 3%</div></div></div>
+            <div class="field-row"><label>Vasuki (market connector) &amp; margin</label><div class="num-pad-hint" style="font-size:15px;">Rekha · 8%</div></div>
+            <div class="field-row"><label>Mitra (village activator)</label><div class="num-pad-hint" style="font-size:15px;">Deepak</div></div>
+            <div style="font-size:10px; color:var(--ink-faint); text-align:center; margin-top:6px;">Totals, profit and capacity are calculated back at office.</div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn primary">Finish Stage 3</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Margin travels with the role,</b> not just a name — Mitra has none, matching the paper form exactly.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">DDU Summary — margin waterfall</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">DDU Summary</div><div></div></div>
+            <div class="display" style="font-size:14px; font-weight:700; margin:4px 0 10px;">Amla Murabba — where the ₹120 goes</div>
+            <div class="waterfall">
+              <div class="wf-row"><span class="wf-label">Producer</span><div class="wf-bar-track"><div class="wf-bar" style="width:57%;"></div></div><span class="wf-val num">₹68</span></div>
+              <div class="wf-row"><span class="wf-label">Dhawak</span><div class="wf-bar-track"><div class="wf-bar" style="width:5%;background:var(--good);"></div></div><span class="wf-val num">₹3</span></div>
+              <div class="wf-row"><span class="wf-label">Vasuki</span><div class="wf-bar-track"><div class="wf-bar" style="width:8%;background:var(--teal);"></div></div><span class="wf-val num">₹5</span></div>
+              <div class="wf-row"><span class="wf-label">Retailer</span><div class="wf-bar-track"><div class="wf-bar" style="width:20%;background:var(--warn);"></div></div><span class="wf-val num">₹24</span></div>
+              <div class="wf-row" style="border-top:1px dashed var(--line-strong); padding-top:6px; margin-top:2px;"><span class="wf-label" style="font-weight:800;">Retail MRP</span><div class="wf-bar-track" style="visibility:hidden;"></div><span class="wf-val num" style="font-weight:800;">₹120</span></div>
+            </div>
+            <div class="fig-grid" style="margin-top:12px;">
+              <div class="summary-figure"><div class="big num">160</div><div class="lbl">Monthly demand</div></div>
+              <div class="summary-figure"><div class="big num">₹9,600</div><div class="lbl">Monthly profit</div></div>
+            </div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn primary">Confirm DDU</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>"Overall view of the DDU and its sales,"</b> as asked — every role's cut visible in one glance, still zero arithmetic for Vasuki.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ================= MITRA ================= -->
+<section class="track" id="mitra">
+  <div class="track-head">
+    <span class="tag mitra">Field · Mitra</span>
+    <div><h3 class="display">Village activator — read-mostly view</h3><p>Reads support needs and logs activation; no margin field, matching the paper form.</p></div>
+  </div>
+  <div class="rail">
+    <div class="card">
+      <span class="capline">Mobile dashboard</span>
+      <div class="phone" style="height:480px;">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Bishunpur Vatika</div><div class="avatar good">D</div></div>
+            <div class="display" style="font-size:15px; font-weight:700; margin:6px 0 10px;">My assigned DDUs</div>
+            <div class="list-card"><div class="top"><div><div class="title">Amla Murabba</div><div class="meta">4 Vaibhavis · GO priced</div></div><span class="chip partial">Needs activation</span></div></div>
+            <div class="spacer"></div>
+            <div class="btn-row"><div class="btn teal">Log a village visit</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note">Reads Part A support needs and Stage 3 role assignment — no editing rights on either.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ================= DHAWAK ================= -->
+<section class="track" id="dhawak">
+  <div class="track-head">
+    <span class="tag mitra">Field · Dhawak</span>
+    <div><h3 class="display">Delivery route owner — read-only schedule</h3><p>Reads Demand ledger rows relevant to his route, plus his own margin %.</p></div>
+  </div>
+  <div class="rail">
+    <div class="card">
+      <span class="capline">Mobile dashboard</span>
+      <div class="phone" style="height:480px;">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Bishunpur route</div><div class="avatar good">S</div></div>
+            <div class="display" style="font-size:15px; font-weight:700; margin:6px 0 10px;">This week's pickups</div>
+            <div class="list-card"><div class="top"><div><div class="title">Amla Murabba → Sharma Kirana</div><div class="meta">Weekly · 10 units</div></div><span class="chip done">5% margin</span></div></div>
+            <div class="spacer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="note">Same delivery rows Vasuki entered in the Demand ledger — margin now shown alongside, not just the route.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ================= ADMIN ================= -->
+<section class="track" id="admin">
+  <div class="track-head">
+    <span class="tag admin">Admin Console</span>
+    <div><h3 class="display">Backend / operations team</h3><p>Owns margin defaults, Block-level reconciliation, and auditing a pricing STOP.</p></div>
+  </div>
+  <div class="rail">
+    <div class="card">
+      <span class="capline">Cost economics audit</span>
+      <div class="browser">
+        <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="urlbar">admin.ajaddu.in / ddu / bishunpur_cloth-tote-bags / pricing</div></div>
+        <div class="admin-shell">
+          <div class="admin-nav">
+            <div class="who">Signed in · Ops · Priya</div>
+            <div class="item">Products &amp; DDUs</div>
+            <div class="item on">Pricing audit</div>
+            <div class="item">Margin defaults</div>
+            <div class="item">Users &amp; roles</div>
+          </div>
+          <div class="admin-main">
+            <h4 class="display">Cloth Tote Bags — priced STOP</h4>
+            <div class="sub">Passed Stage 2 assessment; failed both retail and institution viability.</div>
+            <div class="detail-grid">
+              <div class="detail-block">
+                <h5>Cost inputs <span class="editbtn">Override</span></h5>
+                <div class="kv"><span class="k">Net production cost</span><span class="num">₹6.63</span></div>
+                <div class="kv"><span class="k">Producer selling price</span><span class="num">₹7.62</span></div>
+                <div class="kv"><span class="k">Competitor MRP</span><span class="num">₹10.00</span></div>
+              </div>
+              <div class="detail-block">
+                <h5>Verdict</h5>
+                <div class="kv"><span class="k">Retail gap</span><span class="num" style="color:var(--crit);">−₹0.57</span></div>
+                <div class="kv"><span class="k">Institution gap</span><span class="num" style="color:var(--crit);">−₹0.57</span></div>
+                <div class="kv"><span class="k">Traffic light</span><span class="chip crit">STOP</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="note" style="max-width:520px;"><b>Ops can override a cost input</b> (renegotiated raw-material rate, a higher institution offer) and re-run the same formulas without re-doing Stage 2.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Geography — grows, not just browses</span>
+      <div class="browser">
+        <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="urlbar">admin.ajaddu.in / blocks</div></div>
+        <div class="admin-shell" style="display:block; min-height:auto;">
+          <div class="admin-main" style="padding:18px 22px;">
+            <h4 class="display">Geography — Districts, Blocks &amp; Vatikas</h4>
+            <div class="sub">District → Block → Vatika, and a Vatika is always exactly one village.</div>
+            <div style="font-size:10.5px; font-weight:800; text-transform:uppercase; color:var(--ink-faint); margin-bottom:6px;">Ranchi district · 1 Block</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+              <div class="tree-item"><div class="ti-name">Ranchi-East</div><div class="ti-meta">5 Vatikas · 9 products</div></div>
+              <div class="tree-item" style="border-style:dashed; text-align:center; color:var(--teal); font-weight:700;">+ Add a Block here</div>
+            </div>
+            <div style="font-size:10.5px; font-weight:800; text-transform:uppercase; color:var(--ink-faint); margin:14px 0 6px;">Khunti district · 1 Block</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+              <div class="tree-item"><div class="ti-name">Ranchi-West</div><div class="ti-meta">4 Vatikas · 3 products</div></div>
+              <div class="tree-item" style="border-style:dashed; text-align:center; color:var(--teal); font-weight:700;">+ Add a Block here</div>
+            </div>
+            <div class="tree-item" style="border-style:dashed; text-align:center; color:var(--teal); font-weight:700; margin-top:14px;">+ Add a district</div>
+          </div>
+        </div>
+      </div>
+      <div class="note" style="max-width:520px;"><b>Every new District, Block or Vatika appears the instant it's added</b> — no full-list reload, since a brand-new unit trivially has zero children to recompute. Vatikas are added from inside their Block's own page, keeping the one-village-per-Vatika rule visible at the point of creation.</div>
+    </div>
+
+    <div class="card">
+      <span class="capline">Admin console, on a phone</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body" style="padding:0;">
+            <div style="background:var(--teal); color:var(--teal-ink); padding:10px 14px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div><div style="font-weight:800; font-size:12px;">🌾 AJA DDU Builder</div><div style="font-size:9.5px; opacity:.8;">Admin console · Priya</div></div>
+                <div style="border:1px solid rgba(255,255,255,.4); border-radius:6px; padding:4px 8px; font-size:9.5px; font-weight:700;">Log out</div>
+              </div>
+              <div style="display:flex; gap:5px; overflow-x:auto; margin-top:9px; padding-bottom:2px;">
+                <span style="background:rgba(255,255,255,.15); border-radius:7px; padding:5px 8px; font-size:9.5px; font-weight:700; white-space:nowrap;">All DDUs</span>
+                <span style="opacity:.8; padding:5px 8px; font-size:9.5px; font-weight:700; white-space:nowrap;">Blocks &amp; Vatikas</span>
+                <span style="opacity:.8; padding:5px 8px; font-size:9.5px; font-weight:700; white-space:nowrap;">Products</span>
+                <span style="opacity:.8; padding:5px 8px; font-size:9.5px; font-weight:700; white-space:nowrap;">Assignm…</span>
+              </div>
+            </div>
+            <div style="padding:12px 15px;">
+              <div class="fig-grid">
+                <div class="summary-figure"><div class="big num">5</div><div class="lbl">Live</div></div>
+                <div class="summary-figure"><div class="big num">5</div><div class="lbl">In progress</div></div>
+                <div class="summary-figure"><div class="big num">2</div><div class="lbl">Blocked</div></div>
+                <div class="summary-figure"><div class="big num">0</div><div class="lbl">New</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Log out is always reachable now</b> — it lived only in the desktop sidebar before, invisible below the tablet breakpoint. The nav row scrolls sideways instead of wrapping or overflowing the page.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ================= EDGE CASES ================= -->
+<section class="track" id="edge">
+  <div class="track-head">
+    <div><h3 class="display">Edge cases the new flow has to hold</h3><p>Same "everyday, not exceptional" bar as before — extended for the real forms.</p></div>
+  </div>
+  <div class="edge-grid">
+    <div class="edge">
+      <span class="k2">Hard gate</span>
+      <h5>Critical check fails → dead on arrival</h5>
+      <p>Mustard Oil can't be packaged nearby. Part C fails, Priority score never matters — the product is dropped before Readiness is even asked.</p>
+      <div class="mini-flow"><span class="step">Part C: No</span><span class="arrow">→</span><span class="step">DO NOT PROCEED</span></div>
+    </div>
+    <div class="edge">
+      <span class="k2">Fast path</span>
+      <h5>Sample ready skips Readiness entirely</h5>
+      <p>A product already being made with a sample in hand goes straight to Stage 3 — Part E's 7-point score is only for the ones without a sample yet.</p>
+      <div class="mini-flow"><span class="step">Part D: Yes</span><span class="arrow">→</span><span class="step">Stage 3 (skip Part E)</span></div>
+    </div>
+    <div class="edge">
+      <span class="k2">Price gate</span>
+      <h5>Passed assessment, failed price — Stage 3 stays shut</h5>
+      <p>Cloth Tote Bags is Priority 1 and Critical-pass, but its cost structure can't hit a viable retail or institution price. It sits at "priced STOP" until costs or the target price change.</p>
+      <div class="mini-flow"><span class="step">Stage 2 ✓</span><span class="arrow">→</span><span class="step">Cost economics ✕</span><span class="arrow">→</span><span class="step" style="opacity:.5;">Stage 3 —</span></div>
+    </div>
+    <div class="edge">
+      <span class="k2">Reconciliation → action</span>
+      <h5>A match signal turns into a real merged DDU</h5>
+      <p>Devgaon (2,640/mo capacity) and Sonpur (1,200/mo) each pass Stage 2 for Sal Leaf Plates but neither can cover a 3,000-unit order alone. Admin merges them into one DDU — same demand and price, per-village production and roles.</p>
+      <div class="mini-flow"><span class="step">Devgaon 2,640</span><span class="arrow">+</span><span class="step">Sonpur 1,200</span><span class="arrow">→</span><span class="step">Merged DDU, 3,840</span></div>
+    </div>
+    <div class="edge">
+      <span class="k2">Merge eligibility</span>
+      <h5>Not every Vatika can join a merge</h5>
+      <p>Bishunpur and Ratanpur aren't offered as candidates for the Sal Leaf Plates merge — neither has a passing Stage 2 assessment for that product yet. A Vatika already mid-way through its own Stage 3 for the product is excluded too, so no in-progress ledger gets silently absorbed.</p>
+      <div class="mini-flow"><span class="step">No Stage 2 pass</span><span class="arrow">→</span><span class="step">Greyed out, not selectable</span></div>
+    </div>
+    <div class="edge">
+      <span class="k2">Evidence, not digital</span>
+      <h5>Purchase Order is a photo, not a form</h5>
+      <p>A buyer's paper PO is photographed and attached to its Demand row — the system doesn't require a structured digital order to count a buyer as confirmed.</p>
+      <div class="mini-flow"><span class="step">Paper PO</span><span class="arrow">📷</span><span class="step">Attached to buyer row</span></div>
+    </div>
+    <div class="edge">
+      <span class="k2">Margin override</span>
+      <h5>One DDU pays its Dhawak more than the default</h5>
+      <p>A longer or harder route gets a bumped margin (say 7% instead of the 5% default) — set per-DDU in Stage 3 Section 5 without touching the org-wide default.</p>
+      <div class="mini-flow"><span class="step">Default 5%</span><span class="arrow">→</span><span class="step">This DDU: 7%</span></div>
+    </div>
+    <div class="edge">
+      <span class="k2">Never repeat yourself</span>
+      <h5>A product picked once stays picked</h5>
+      <p>Opening Stage 1 from a product she's already on carries that product with her — pre-filled and editable, never a blank picker asking her to find it again. The same product name, once known, is reused everywhere downstream.</p>
+      <div class="mini-flow"><span class="step">Product open</span><span class="arrow">→</span><span class="step">Stage 1 pre-filled</span><span class="arrow">→</span><span class="step">No reselecting</span></div>
+    </div>
+  </div>
+</section>
+
+<footer class="notes">
+  <h4 class="display">Reading this mockup</h4>
+  <ul>
+    <li>Ledger-style sections (Stage 1 product rows, Stage 3 Demand/Supplier) are shown as one grouped entry screen plus a running list — practical for logging many rows in one sitting, not one question per screen.</li>
+    <li>Cost Economics uses the exact formulas and one worked example (Cloth Tote Bags) from the shared pricing tool; Amla Murabba is a second, invented example to show the GO path.</li>
+    <li>The "Merging Vatikas" section is not a proposal — its screens mirror the built app exactly: Devgaon + Sonpur really is one DDUGroup record, 3,840 is really 2,640 + 1,200 summed by the model, and ₹1,377 is the real computed monthly profit, verified end to end.</li>
+    <li>Role levels (District/Block/Village chips in Role Journeys) are likewise verified against the running app, including the "never repeat yourself" fix — a product picked once no longer has to be found again to log more Stage 1 data against it.</li>
+    <li>Colour system: warm oat ground, marigold for field-app actions, deep petrol teal for Admin/section tabs — Cost Economics screens borrow an amber "money" tag to read as a distinct, serious step.</li>
+    <li>Not yet drawn: Block-level survey's business-mapping step before its institution survey, and a dedicated Sakhya-leads list — same visual language, to follow.</li>
+    <li><b>Latest pass, verified end to end on the running app:</b> Assignment policy now auto-saves per tap; District/Block/Vatika can all be created from the Admin console (not just viewed) and appear immediately, no reload; every Home page opens with a needs-you / live / for-awareness / not-started count strip plus a named list of catalog products nobody's surveyed yet in your own area; every Admin screen was checked at phone width (375px) with no page-level horizontal scroll and a reachable log-out button. A real performance bug was also found and fixed in this pass — the Admin "All DDUs" list was fetching each Vatika's data one at a time instead of all at once, which alone had been stretching its load time past two seconds.</li>
+  </ul>
+</footer>
+</body>
+</html>

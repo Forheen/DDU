@@ -58,7 +58,7 @@ export function Login() {
         <h1 className="font-display mt-2 text-xl font-bold">AJA DDU Builder</h1>
         <p className="mt-1 text-sm text-inksoft">Who is signing in, and as what?</p>
         <a
-          href="https://claude.ai/code/artifact/da8d1b75-1025-466f-9e21-c05146039c5a"
+          href="/design.html"
           target="_blank"
           rel="noreferrer"
           className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-linestrong bg-surface px-3 py-1.5 text-[11px] font-bold text-teal"
