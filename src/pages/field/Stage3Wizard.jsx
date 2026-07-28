@@ -3,9 +3,10 @@ import { Link, useParams } from 'react-router-dom'
 import { getProduct } from '../../services/productRepository.js'
 import { getVatika } from '../../services/vatikaRepository.js'
 import { getCostEconomics } from '../../services/costEconomicsRepository.js'
-import { listUsersByRole } from '../../services/userRepository.js'
+import { listUsersByRole, listUsers } from '../../services/userRepository.js'
 import { getOrCreateSingleVatikaGroup } from '../../services/dduGroupRepository.js'
 import { scopeCoversVatika } from '../../services/scopeService.js'
+import { getAssessment } from '../../services/stage2Repository.js'
 import {
   listBuyers, addBuyer,
   listSupplierLines, addSupplierLine,
@@ -15,6 +16,7 @@ import {
 } from '../../services/stage3Repository.js'
 import { ROLES } from '../../models/index.js'
 import { BigChoice, NumberField, TextField, Select, FieldLabel, PrimaryButton } from '../../components/FormControls.jsx'
+import { Stage2Recap, CostEconomicsRecap } from '../../components/StageRecaps.jsx'
 
 const TABS = ['1 Demand', '2 Supplier', '3 Production', '4 Money', '5 Roles']
 const BUYER_TYPES = ['Retail shop', 'Institution', 'Household', 'Other']
@@ -112,6 +114,9 @@ export function Stage3Wizard() {
   const [rolesByVatika, setRolesByVatika] = useState({})
   const [vasukisByVatika, setVasukisByVatika] = useState({})
   const [mitrasByVatika, setMitrasByVatika] = useState({})
+  const [stage2Rows, setStage2Rows] = useState([])
+  const [usersById, setUsersById] = useState({})
+  const [showEarlier, setShowEarlier] = useState(false)
   const [ready, setReady] = useState(false)
 
   const dduId = group?.id
@@ -167,6 +172,12 @@ export function Stage3Wizard() {
       setProductionByVatika(Object.fromEntries(g.vatikaIds.map((vid, i) => [vid, productionEntries[i]])))
       const rolesEntries = await Promise.all(g.vatikaIds.map((vid) => getRolesForVatika(g.id, vid)))
       setRolesByVatika(Object.fromEntries(g.vatikaIds.map((vid, i) => [vid, rolesEntries[i]])))
+
+      const assessments = await Promise.all(g.vatikaIds.map((vid) => getAssessment(vid, productId)))
+      setStage2Rows(g.vatikaIds.map((vid, i) => ({ vatikaId: vid, vatikaName: vatikas[i]?.name, assessment: assessments[i] })))
+      const users = await listUsers()
+      setUsersById(Object.fromEntries(users.map((u) => [u.id, u])))
+
       setReady(true)
     }
     setReady(false)
@@ -260,6 +271,21 @@ export function Stage3Wizard() {
         {group.isMerged && (
           <div className="mt-2 rounded-lg bg-tealsoft px-3 py-2 text-xs font-bold text-teal">
             🔗 Merged DDU — {groupVatikas.map((v) => v.name).join(' + ')} pool production for this one shared plan.
+          </div>
+        )}
+      </div>
+
+      <div className="rounded-xl border border-line bg-surface p-3">
+        <button className="flex w-full items-center justify-between text-left" onClick={() => setShowEarlier((s) => !s)}>
+          <span className="text-xs font-bold text-teal">📋 Why this is here — Stage 2 &amp; Cost Economics</span>
+          <span className="text-xs text-inkfaint">{showEarlier ? '▾' : '▸'}</span>
+        </button>
+        {showEarlier && (
+          <div className="mt-2 flex flex-col gap-2 border-t border-line pt-2">
+            {stage2Rows.map((r) => (
+              <Stage2Recap key={r.vatikaId} assessment={r.assessment} vatikaName={group.isMerged ? r.vatikaName : null} usersById={usersById} />
+            ))}
+            <CostEconomicsRecap costEconomics={costEconomics} usersById={usersById} />
           </div>
         )}
       </div>

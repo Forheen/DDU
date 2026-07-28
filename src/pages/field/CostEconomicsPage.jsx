@@ -5,8 +5,11 @@ import { getCostEconomics, saveCostEconomics } from '../../services/costEconomic
 import { getProduct } from '../../services/productRepository.js'
 import { getVatika } from '../../services/vatikaRepository.js'
 import { getOrCreateSingleVatikaGroup } from '../../services/dduGroupRepository.js'
+import { getAssessment } from '../../services/stage2Repository.js'
+import { listUsers } from '../../services/userRepository.js'
 import { CostEconomics, DEFAULT_MARGINS } from '../../models/index.js'
 import { NumberField, FieldLabel, PrimaryButton } from '../../components/FormControls.jsx'
+import { Stage2Recap, ProvenanceLine } from '../../components/StageRecaps.jsx'
 
 const money = (n) => (n == null ? '—' : `₹${n.toFixed(2)}`)
 const NON_NEGATIVE_FIELDS = ['rawMaterialCost', 'packagingCost', 'directLabourCost', 'manufacturingOverhead', 'transportToHub', 'otherCost']
@@ -31,6 +34,9 @@ export function CostEconomicsPage() {
   const [otherVatikaNames, setOtherVatikaNames] = useState([])
   const [form, setForm] = useState(null)
   const [fieldErrors, setFieldErrors] = useState({})
+  const [stage2Rows, setStage2Rows] = useState([])
+  const [usersById, setUsersById] = useState({})
+  const [showStage2, setShowStage2] = useState(false)
   const { currentUser } = useAuth()
   const navigate = useNavigate()
 
@@ -46,6 +52,12 @@ export function CostEconomicsPage() {
       }
       const existing = await getCostEconomics(g.id)
       setForm(existing || new CostEconomics({ id: null, dduId: g.id, margins: { ...DEFAULT_MARGINS } }))
+
+      const vatikas = await Promise.all(g.vatikaIds.map(getVatika))
+      const assessments = await Promise.all(g.vatikaIds.map((vid) => getAssessment(vid, productId)))
+      setStage2Rows(g.vatikaIds.map((vid, i) => ({ vatikaId: vid, vatikaName: vatikas[i]?.name, assessment: assessments[i] })))
+      const users = await listUsers()
+      setUsersById(Object.fromEntries(users.map((u) => [u.id, u])))
     }
     load()
   }, [vatikaId, productId])
@@ -76,6 +88,25 @@ export function CostEconomicsPage() {
         {group?.isMerged && (
           <div className="mt-2 rounded-lg bg-tealsoft px-3 py-2 text-xs font-bold text-teal">
             🔗 Merged DDU — shared with {otherVatikaNames.join(', ')}. One price decision for the whole pooled production.
+          </div>
+        )}
+        {form.filledBy && (
+          <div className="mt-2">
+            <ProvenanceLine usersById={usersById} filledBy={form.filledBy} updatedAt={form.updatedAt} verb="Last set" />
+          </div>
+        )}
+      </div>
+
+      <div className="rounded-xl border border-line bg-surface p-3">
+        <button className="flex w-full items-center justify-between text-left" onClick={() => setShowStage2((s) => !s)}>
+          <span className="text-xs font-bold text-teal">📋 What Stage 2 found</span>
+          <span className="text-xs text-inkfaint">{showStage2 ? '▾' : '▸'}</span>
+        </button>
+        {showStage2 && (
+          <div className="mt-2 flex flex-col gap-2 border-t border-line pt-2">
+            {stage2Rows.map((r) => (
+              <Stage2Recap key={r.vatikaId} assessment={r.assessment} vatikaName={group?.isMerged ? r.vatikaName : null} usersById={usersById} />
+            ))}
           </div>
         )}
       </div>

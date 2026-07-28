@@ -1,24 +1,39 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { buildDDU } from '../../services/dduService.js'
+import { listUsers } from '../../services/userRepository.js'
 import { StatusChip } from '../../components/StatusChip.jsx'
 import { CategoryTag } from '../../components/CategoryTag.jsx'
 import { PendingBanner } from '../../components/PendingBanner.jsx'
+import { Stage1Recap, Stage2Recap, CostEconomicsRecap, Stage3Recap } from '../../components/StageRecaps.jsx'
 
-function Row({ to, title, status, meta, secondary }) {
+function StageSection({ to, title, status, secondary, defaultOpen, children }) {
+  const [open, setOpen] = useState(defaultOpen)
   return (
     <div className="rounded-xl border border-linestrong bg-surface p-3">
-      <Link to={to} className="flex items-center justify-between">
-        <div>
+      <div className="flex items-center justify-between gap-2">
+        <button className="flex flex-1 items-center justify-between text-left" onClick={() => setOpen((o) => !o)}>
           <div className="text-sm font-bold">{title}</div>
-          <div className="text-[11px] text-inksoft">{meta}</div>
+          <div className="flex items-center gap-2">
+            <StatusChip status={status} />
+            <span className="text-xs text-inkfaint">{open ? '▾' : '▸'}</span>
+          </div>
+        </button>
+      </div>
+      {open && (
+        <div className="mt-3 flex flex-col gap-2 border-t border-line pt-3">
+          {children}
+          <div className="mt-1 flex flex-wrap gap-3">
+            <Link to={to} className="text-[11px] font-bold text-teal">
+              Open / edit →
+            </Link>
+            {secondary && (
+              <Link to={secondary.to} className="text-[11px] font-bold text-teal">
+                {secondary.label} →
+              </Link>
+            )}
+          </div>
         </div>
-        <StatusChip status={status} />
-      </Link>
-      {secondary && (
-        <Link to={secondary.to} className="mt-1.5 inline-block text-[11px] font-bold text-teal">
-          {secondary.label} →
-        </Link>
       )}
     </div>
   )
@@ -27,9 +42,12 @@ function Row({ to, title, status, meta, secondary }) {
 export function ProductProfile() {
   const { vatikaId, productId } = useParams()
   const [ddu, setDdu] = useState(null)
+  const [usersById, setUsersById] = useState({})
 
   async function reload() {
     setDdu(await buildDDU(vatikaId, productId))
+    const users = await listUsers()
+    setUsersById(Object.fromEntries(users.map((u) => [u.id, u])))
   }
 
   useEffect(() => {
@@ -40,9 +58,6 @@ export function ProductProfile() {
   if (!ddu) return <div className="py-10 text-center text-sm text-inkfaint">Loading…</div>
 
   const base = `/vatikas/${vatikaId}/products/${productId}`
-  const stage2Summary = ddu.stage2ByVatika
-    .map((v) => `${ddu.vatikas.find((x) => x.id === v.vatikaId)?.name}: ${v.assessment ? v.status : 'not started'}`)
-    .join(' · ')
 
   return (
     <div className="flex flex-col gap-4">
@@ -61,28 +76,45 @@ export function ProductProfile() {
 
       <PendingBanner ddu={ddu} />
 
+      <p className="text-[11px] text-inkfaint">
+        Tap any section to see exactly what's been filled so far, by whom — everyone can see this, even sections you can't edit.
+      </p>
+
       <div className="flex flex-col gap-2">
-        <Row
+        <StageSection
           to={`/vatikas/${vatikaId}/stage1/market/new?productId=${productId}`}
+          secondary={{ to: `/vatikas/${vatikaId}/stage1/institution/new?productId=${productId}`, label: 'Log an institution instead' }}
           title="Stage 1 · Opportunity Mapping"
           status={ddu.stage1Status}
-          meta={`${ddu.marketEntries.length} market row(s) · ${ddu.institutionEntries.length} institution row(s)`}
-          secondary={{ to: `/vatikas/${vatikaId}/stage1/institution/new?productId=${productId}`, label: 'Log an institution instead' }}
-        />
-        <Row to={`${base}/stage2`} title="Stage 2 · Production Assessment" status={ddu.stage2Status} meta={stage2Summary} />
-        <Row
-          to={`${base}/cost-economics`}
-          title="Cost Economics"
-          status={ddu.costEconomicsStatus}
-          meta={ddu.costEconomics ? (ddu.costEconomics.procurementDecision || 'Awaiting prices') : 'Not started'}
-        />
-        <Row
-          to={`${base}/stage3`}
-          title="Stage 3 · DDU Design"
-          status={ddu.stage3Status}
-          meta={`${ddu.buyers.length} buyer(s) · ${ddu.supplierLines.length} supplier(s)`}
-        />
-        <Row to={`${base}/summary`} title="DDU Summary" status={ddu.isLive ? 'done' : 'partial'} meta="Auto-calculated, read only" />
+          defaultOpen={ddu.stage1Status !== 'missing'}
+        >
+          <Stage1Recap marketEntries={ddu.marketEntries} institutionEntries={ddu.institutionEntries} usersById={usersById} />
+        </StageSection>
+
+        <StageSection to={`${base}/stage2`} title="Stage 2 · Production Assessment" status={ddu.stage2Status} defaultOpen={ddu.stage2Status !== 'missing'}>
+          <div className="flex flex-col gap-2">
+            {ddu.stage2ByVatika.map(({ vatikaId: vid, assessment }) => (
+              <Stage2Recap
+                key={vid}
+                assessment={assessment}
+                vatikaName={ddu.isMerged ? ddu.vatikas.find((v) => v.id === vid)?.name : null}
+                usersById={usersById}
+              />
+            ))}
+          </div>
+        </StageSection>
+
+        <StageSection to={`${base}/cost-economics`} title="Cost Economics" status={ddu.costEconomicsStatus} defaultOpen={ddu.costEconomicsStatus !== 'missing'}>
+          <CostEconomicsRecap costEconomics={ddu.costEconomics} usersById={usersById} />
+        </StageSection>
+
+        <StageSection to={`${base}/stage3`} title="Stage 3 · DDU Design" status={ddu.stage3Status} defaultOpen={ddu.stage3Status !== 'missing'}>
+          <Stage3Recap ddu={ddu} usersById={usersById} />
+        </StageSection>
+
+        <StageSection to={`${base}/summary`} title="DDU Summary" status={ddu.isLive ? 'done' : 'partial'} defaultOpen={false}>
+          <div className="text-xs text-inkfaint">Auto-calculated overview — demand, capacity, profit and margin split.</div>
+        </StageSection>
       </div>
     </div>
   )

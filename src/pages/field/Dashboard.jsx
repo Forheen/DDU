@@ -18,7 +18,32 @@ const KRA_TEXT = {
   [ROLES.SWSM]: 'Your KRA: run the production assessment (Stage 2) and the price check (Cost Economics) for your villages.',
 }
 
+/** The single most useful real fact about this DDU right now — what's actually been filled, not just a status chip. */
+function recapLine(ddu) {
+  if (ddu.stage3Status !== 'missing') {
+    const cap = ddu.monthlyCapacity != null ? `${ddu.monthlyCapacity}/mo capacity` : 'capacity not set'
+    return `${ddu.totalMonthlyDemand} demand/mo · ${cap}${ddu.monthlyProfit != null ? ` · ₹${ddu.monthlyProfit.toFixed(0)} profit/mo` : ''}`
+  }
+  if (ddu.costEconomics) {
+    return `${ddu.costEconomics.procurementDecision || 'Pricing in progress'} · producer ₹${ddu.costEconomics.producerSellingPrice.toFixed(2)}`
+  }
+  const doneAssessments = ddu.stage2ByVatika.filter((v) => v.assessment)
+  if (doneAssessments.length > 0) {
+    return doneAssessments
+      .map((v) => {
+        const a = v.assessment
+        return `Priority ${a.priorityLevel ?? '—'} · ${a.criticalPass === null ? 'Critical pending' : a.criticalPass ? 'Critical pass' : 'Critical fail'}`
+      })
+      .join(' · ')
+  }
+  if (ddu.stage1Status !== 'missing') {
+    return `${ddu.marketEntries.length} market row(s) · ${ddu.institutionEntries.length} institution row(s) logged`
+  }
+  return null
+}
+
 function DDURow({ ddu, dim }) {
+  const recap = recapLine(ddu)
   return (
     <Link
       to={`/vatikas/${ddu.vatikaId}/products/${ddu.productId}`}
@@ -39,6 +64,7 @@ function DDURow({ ddu, dim }) {
           <StatusChip status={ddu.stage3Status}>3</StatusChip>
         </div>
       </div>
+      {recap && <div className="mt-1.5 text-[11px] text-inksoft">{recap}</div>}
       {ddu.pendingOn && (
         <div className="mt-2 rounded-lg bg-warnbg px-2.5 py-1.5 text-[11px] font-bold text-warn">
           ⏳ Waiting on {ddu.pendingOn.role} — {ddu.pendingOn.what}

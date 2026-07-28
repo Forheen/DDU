@@ -661,10 +661,49 @@
       </div>
       <div class="note"><b>The whole point, up front:</b> what's done, what's waiting on you, and what's never been touched at all — before scrolling to a single row. "Not started" comes straight from the product catalog against this Block's own Stage 1/2/3 data, not a guess.</div>
     </div>
+
+    <div class="card">
+      <span class="capline">What's actually been filled — not just a chip</span>
+      <div class="phone tall">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●</span></div>
+          <div class="screen-body">
+            <div class="app-header"><div class="place">Bishunpur</div><div></div></div>
+            <div class="display" style="font-size:15px; font-weight:700; margin:4px 0 8px;">🫙 Amla Murabba</div>
+            <div class="readonly-inline" style="margin-bottom:8px;">Tap any section to see exactly what's been filled, by whom — everyone can see this, even sections you can't edit.</div>
+            <div class="list-card" style="margin-bottom:6px;">
+              <div class="top"><div class="title">Stage 1 · Opportunity Mapping</div><span class="chip done">Done ▾</span></div>
+              <div class="meta" style="margin-top:6px;">Sharma Kirana · local · 250g jar · 2–3 shops selling</div>
+              <div class="meta" style="opacity:.7;">Logged by Rekha on 2026-06-02</div>
+            </div>
+            <div class="list-card">
+              <div class="top"><div class="title">Stage 2 · Production Assessment</div><span class="chip done">Done ▾</span></div>
+              <div class="kv" style="margin-top:4px;"><span class="k">Priority</span><span>1</span></div>
+              <div class="kv"><span class="k">Critical check</span><span>Pass</span></div>
+              <div class="kv"><span class="k">Readiness</span><span>6 / 7</span></div>
+              <div class="meta" style="opacity:.7;">Assessed by Manoj on 2026-06-08</div>
+            </div>
+            <div class="spacer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><b>Every stage, expandable, everywhere it appears</b> — Home, the product profile, and inside Stage 2/3's own screens as a "what came before" recap. Full transparency, not just a status dot.</div>
+    </div>
   </div>
 
   <div class="sec-h" style="margin-top:26px;"><span class="letter">⚠</span><h4>Gaps this pass closes</h4><span class="cnt">found by walking the built app, not guessed</span></div>
   <div class="edge-grid">
+    <div class="edge">
+      <span class="k2">Status chips, no substance</span>
+      <h5>You could see a stage was "Done" — never what was actually in it</h5>
+      <p>The product profile and Home board only ever showed a chip (done/partial/blocked) and a one-line count. Seeing the real shop name, the real priority score, or who set a price meant navigating into someone else's edit form. Every stage row now expands in place into the real filled data — with who filled it and when — and Home rows carry a live one-line recap (demand, capacity, profit, or priority/critical outcome) instead of just chips.</p>
+    </div>
+    <div class="edge">
+      <span class="k2">Cross-stage blindness</span>
+      <h5>Filling Stage 3 with no idea what Stage 2 or pricing had decided</h5>
+      <p>Stage 2 and Stage 3's own wizards had zero visibility into earlier work — a Vasuki building Stage 3 couldn't see SWSM's assessment or the price verdict without leaving the page, and SWSM assessing Stage 2 couldn't see what Stage 1 had actually found. Both wizards now carry a collapsible "what came before" recap right at the top.</p>
+    </div>
     <div class="edge">
       <span class="k2">Missing entry point</span>
       <h5>Products could only ever be created by accident</h5>
@@ -1694,6 +1733,7 @@
     <li>Colour system: warm oat ground, marigold for field-app actions, deep petrol teal for Admin/section tabs — Cost Economics screens borrow an amber "money" tag to read as a distinct, serious step.</li>
     <li>Not yet drawn: Block-level survey's business-mapping step before its institution survey, and a dedicated Sakhya-leads list — same visual language, to follow.</li>
     <li><b>Latest pass, verified end to end on the running app:</b> Assignment policy now auto-saves per tap; District/Block/Vatika can all be created from the Admin console (not just viewed) and appear immediately, no reload; every Home page opens with a needs-you / live / for-awareness / not-started count strip plus a named list of catalog products nobody's surveyed yet in your own area; every Admin screen was checked at phone width (375px) with no page-level horizontal scroll and a reachable log-out button. A real performance bug was also found and fixed in this pass — the Admin "All DDUs" list was fetching each Vatika's data one at a time instead of all at once, which alone had been stretching its load time past two seconds.</li>
+    <li><b>Newest pass:</b> a brand-new District/Block/Vatika now starts covered — every existing Dhawak gets a new District automatically, every Vasuki/Vidushi gets a new Block, every SWSM/Mitra gets a new Vatika, so nothing created from the Geography page is orphaned with no one able to act on it (Admin can still narrow coverage afterwards). Every stage screen (Home, product profile, Stage 2, Cost Economics, Stage 3) now surfaces the real filled data — not just a status chip — with who filled it and when, so any role can see what another role already decided without needing edit access to see it. Also fixed a stale-cache crash in Assignment policy (a browser holding data saved before a schema change) by hardening the save path and bumping the data version.</li>
   </ul>
 </footer>
 </body>

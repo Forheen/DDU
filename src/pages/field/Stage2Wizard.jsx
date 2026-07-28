@@ -2,10 +2,13 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthContext.jsx'
 import { getAssessment, saveAssessment, getFinalRanking } from '../../services/stage2Repository.js'
+import { listMarketEntries, listInstitutionEntries } from '../../services/stage1Repository.js'
 import { getProduct } from '../../services/productRepository.js'
 import { getVatika } from '../../services/vatikaRepository.js'
+import { listUsers } from '../../services/userRepository.js'
 import { Stage2Assessment, READINESS_FACTORS, EXTERNAL_SUPPORT_OPTIONS } from '../../models/index.js'
 import { BigChoice, NumberField, TextField, YesNo, FieldLabel, PrimaryButton, GhostButton } from '../../components/FormControls.jsx'
+import { Stage1Recap } from '../../components/StageRecaps.jsx'
 
 const TABS = ['A · Basic', 'B · Priority', 'C · Critical', 'D · Sample', 'E · Ready']
 
@@ -27,6 +30,9 @@ export function Stage2Wizard() {
   const [form, setForm] = useState(null)
   const [tab, setTab] = useState(0)
   const [ranking, setRanking] = useState([])
+  const [stage1, setStage1] = useState(null)
+  const [usersById, setUsersById] = useState({})
+  const [showStage1, setShowStage1] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -45,6 +51,13 @@ export function Stage2Wizard() {
           }),
       )
       setRanking(await getFinalRanking(vatikaId))
+      const [marketEntries, institutionEntries, users] = await Promise.all([
+        listMarketEntries({ vatikaId, productId }),
+        listInstitutionEntries({ vatikaId, productId }),
+        listUsers(),
+      ])
+      setStage1({ marketEntries, institutionEntries })
+      setUsersById(Object.fromEntries(users.map((u) => [u.id, u])))
     }
     load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -78,6 +91,20 @@ export function Stage2Wizard() {
         <h1 className="font-display text-xl font-bold">
           {product.icon} {product.name} — Stage 2
         </h1>
+      </div>
+
+      <div className="rounded-xl border border-line bg-surface p-3">
+        <button className="flex w-full items-center justify-between text-left" onClick={() => setShowStage1((s) => !s)}>
+          <span className="text-xs font-bold text-teal">
+            📋 What Stage 1 found {stage1 ? `(${stage1.marketEntries.length + stage1.institutionEntries.length})` : ''}
+          </span>
+          <span className="text-xs text-inkfaint">{showStage1 ? '▾' : '▸'}</span>
+        </button>
+        {showStage1 && (
+          <div className="mt-2 border-t border-line pt-2">
+            <Stage1Recap marketEntries={stage1?.marketEntries} institutionEntries={stage1?.institutionEntries} usersById={usersById} />
+          </div>
+        )}
       </div>
 
       <div className="flex gap-1 overflow-x-auto">
